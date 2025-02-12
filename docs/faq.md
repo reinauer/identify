@@ -26,7 +26,7 @@ If Hyperion releases more hotfixes like this in the future, I may reconsider thi
 
 > **Why is there no CPU/FPU clock shown?**
 
-On emulated Amigas, Emu68 systems, and systems with an FPGA processor, Identify won't give a CPU or FPU clock. This is because these systems work very differently than traditional processors, so the clock measurement would give a useless random number that does not truely correspond to the computing power.
+On emulated Amigas, Emu68 systems, and systems with an FPGA processor, Identify won't give a CPU or FPU clock. This is because these systems work very differently than traditional processors, so the clock measurement would give a useless random number that does not truly correspond to the computing power.
 
 The intention of Identify is to show your true CPU clock. If you need a benchmark test, you can use tools like [SysInfo](https://aminet.net/package/util/moni/SysInfo), which give a more realistic result.
 
@@ -70,7 +70,7 @@ On DraCo, an enforcer hit occurs while the last alert is fetched. This alert is 
 
 > **Why is there no CPU/FPU clock shown?**
 
-This is because the result would be rather random than representative. See the same quesion above for a more detailed explanation.
+This is because the result would be rather random than representative. See the same question above for a more detailed explanation.
 
 > **Emulation is detected properly, but I do not get information about the host system.**
 
@@ -88,7 +88,7 @@ In the source repository and the IdentifyDev package, you will find all files th
 
 > **I'd like to do a fork.**
 
-Well, you _can_ do that. But please consider to contribute to the official project instead, so we won't have too many different versions circulating around. If you want to publish your fork to the AmiNet, please _do not use_ the "IdentifyDev" and "IdentifyUsr" package names, as they are reserved for official releases! Use own package names instead.
+Well, you _can_ do that. But please consider contributing to the official project instead, so we won't have too many different versions circulating around. If you want to publish your fork to the AmiNet, please _do not use_ the "IdentifyDev" and "IdentifyUsr" package names, as they are reserved for official releases! Use own package names instead.
 
 > **What about Identify V37?**
 
