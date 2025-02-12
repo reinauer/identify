@@ -1,6 +1,6 @@
 # identify.library
 
-Identify is a shared Amiga library that helps identifying all kind of system parameters.
+Identify is a shared Amiga library that helps to identify all kind of system parameters.
 
 The source code was closed, like almost all of my Amiga projects. I have now reviewed and reformatted the files, translated the comments from German to English, and made the project compilable on Linux (and probably other targets) using vbcc. The source is now open to everyone for contributing, studying, archiving, or just enjoying the good old Amiga times.
 
@@ -30,7 +30,7 @@ If you have questions about identify, maybe you will find answers [here](docs/fa
 
 ## Building from Source
 
-This project is mainly made to be build on Linux machines. However, with a few modifications it can also be built on AmigaOS and other operating systems.
+This project is mainly made to be built on Linux machines. However, with a few modifications it can also be built on AmigaOS and other operating systems.
 
 Requirements:
 
@@ -78,6 +78,6 @@ If you want to provide other translations, please contact me for assistance.
 
 If you're managing an own board database in your project, feel invited to sync it with [this database](src/identify/ID_Database.s). However, it would only be fair if you then also share the boards that are missing here. Please open an issue, send a merge request, or just get in contact with me. Thank you!
 
-## Licence
+## License
 
-`Identify` is distributed under LGPLv3 ([Lesser Gnu Public Licence](http://www.gnu.org/licenses/lgpl.html)).
+`Identify` is distributed under LGPLv3 ([Lesser Gnu Public License](http://www.gnu.org/licenses/lgpl.html)).
