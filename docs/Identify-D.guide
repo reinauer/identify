@@ -518,7 +518,15 @@ Eine FAQ in Englisch findest du online unter:
 History
 *******
 
+@{i}V 44.2@{ui}
+        @{b}*@{ub} Quelltext liegt nun bei Codeberg
+        @{b}*@{ub} Weitere CPU/FPU-Taktfrequenzen werden erkannt
+        @{b}*@{ub} Apollo 68080 wird erkannt
+        @{b}*@{ub} inline/identify.h fehlte (Rafal Zabdyr)
+        @{b}*@{ub} Minimig Control Board wurde nicht erkannt (Gerald Schnabel)
+        @{b}*@{ub} A2000 mit PCMCIA-Erweiterung wurde als A600 erkannt, behoben
         @{b}*@{ub} UAE/DraCo wurde nicht als Emulator erkannt
+        @{b}*@{ub} Weitere Karten hinzugefügt
 
 @{i}V 44.1@{ui}
         @{b}*@{ub} Bugfix: Emu68 MMU wurde fehlerhaft angezeigt

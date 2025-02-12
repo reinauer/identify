@@ -471,7 +471,15 @@ A FAQ can be found online here:
 History
 *******
 
+@{i}V 44.2@{ui}
+        @{b}*@{ub} Source code has moved to Codeberg
+        @{b}*@{ub} More CPU/FPU clock frequencies are detected
+        @{b}*@{ub} Apollo 68080 is now detected
+        @{b}*@{ub} inline/identify.h was missing (Rafal Zabdyr)
+        @{b}*@{ub} Minimig Control Board was not detected (Gerald Schnabel)
+        @{b}*@{ub} A2000 with PCMCIA expansion was detected as A600, fixed
         @{b}*@{ub} UAE/DraCo was not detected as emulator
+        @{b}*@{ub} Added more boards
 
 @{i}V 44.1@{ui}
         @{b}*@{ub} Bugfix: Emu68 MMU was not detected correctly
