@@ -152,9 +152,9 @@ GetClocks	movem.l d2-d7/a0-a4,-(SP)
 		bsr	ComputeClk		; compute CPU clock
 		move.l	d0,(gcl_CPUClk,a5)
 	;-- test FPU
-		tst.b	(gcl_FPUType,a5)	; is there an FPU anyway?
+		move.b	(gcl_FPUType,a5),d2	; is there an FPU anyway?
 		beq	.no_fpu
-		cmp.b	#3,(gcl_FPUType,a5)	; 68040 / 68060?
+		cmp.b	#3,d2			; 68040 / 68060?
 		blt	.ext_fpu_clk
 		move.l	(gcl_CPUClk,a5),d0	; yes: internal FPU, always the same clock as CPU
 		move.l	d0,(gcl_FPUClk,a5)
