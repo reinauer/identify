@@ -1043,7 +1043,7 @@ do_System	move	d0,d7
 		tst.l	d0			; so check before Amiga 600!
 		bne	.amiga500
 	;---- CDTV
-		exec.q	Forbid
+		exec	Forbid
 		lea	(dmacsemaphore,a4),a1
 		exec.q	FindSemaphore
 		exec.q	Permit
