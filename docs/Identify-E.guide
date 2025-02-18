@@ -471,6 +471,9 @@ A FAQ can be found online here:
 History
 *******
 
+@{i}V 44.3@{ui}
+        @{b}*@{ub} System detection crashed on some systems, fixed
+
 @{i}V 44.2@{ui}
         @{b}*@{ub} Source code has moved to Codeberg
         @{b}*@{ub} More CPU/FPU clock frequencies are detected
