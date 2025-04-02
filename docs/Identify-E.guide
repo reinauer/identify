@@ -471,6 +471,9 @@ A FAQ can be found online here:
 History
 *******
 
+@{i}V 44.4@{ui}
+        @{b}*@{ub} Added AmigaOS 3.2.3
+
 @{i}V 44.3@{ui}
         @{b}*@{ub} System detection crashed on some systems, fixed
 

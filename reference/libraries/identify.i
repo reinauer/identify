@@ -240,6 +240,7 @@ IDOS_3_5_BB2	EQU	14	; OS3.5   (V44.5 "Boing Bag 2")
 IDOS_3_9_BB1	EQU	15	; OS3.9   (V45.2 "Boing Bag 1")
 IDOS_3_9_BB2	EQU	16	; OS3.9   (V45.3 "Boing Bag 2")
 IDOS_3_2_2	EQU	17	; OS3.2.2 (V47.111 by Hyperion)
+IDOS_3_2_3	EQU	18	; OS3.2.3 (V47.115 by Hyperion)
 
 *
 * IDHW_CHIPSET numerical result codes

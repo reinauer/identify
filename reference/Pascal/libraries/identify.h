@@ -220,9 +220,10 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDOS_3_2_1      = 12;    { OS3.2.1 (V47.102 by Hyperion) }
        IDOS_3_5_BB1    = 13;    { OS3.5   (V44.4 "Boing Bag 1") }
        IDOS_3_5_BB2    = 14;    { OS3.5   (V44.5 "Boing Bag 2") }
-       IDOS_3_9_BB1    = 15;	  { OS3.9   (V45.2 "Boing Bag 1") }
-       IDOS_3_9_BB2    = 16;	  { OS3.9   (V45.3 "Boing Bag 2") }
+       IDOS_3_9_BB1    = 15;    { OS3.9   (V45.2 "Boing Bag 1") }
+       IDOS_3_9_BB2    = 16;    { OS3.9   (V45.3 "Boing Bag 2") }
        IDOS_3_2_2      = 17;    { OS3.2.2 (V47.111 by Hyperion) }
+       IDOS_3_2_3      = 18;    { OS3.2.3 (V47.115 by Hyperion) }
 
 { IDHW_CHIPSET numerical result codes }
 
