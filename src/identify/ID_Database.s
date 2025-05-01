@@ -1360,6 +1360,12 @@ manuf_tab	tabinit
 		board	  010,"RCA 120",		MSG_EXP_RAM
 		endmf	02640
 
+		manuf   02782,"Oliver Achten"
+		board	  016,"AmiGUS",			MSG_EXP_AUDIO
+		board	  017,"AmiGUS",			MSG_EXP_AUDIO
+		board	  018,"AmiGUS",			MSG_EXP_AUDIO
+		endmf	02782
+
 		manuf	03084,"Team 4"
 		board	  012,"Kasmin",			MSG_EXP_GFX
 		endmf	03084
