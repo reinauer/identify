@@ -29,6 +29,10 @@ DATE		MACRO
 		dc.b	'11.4.2025'
 		ENDM
 
+YEAR		MACRO
+		dc.b	'2025'
+		ENDM
+
 PRGNAME 	MACRO
 		dc.b	'identify.library'
 		ENDM
