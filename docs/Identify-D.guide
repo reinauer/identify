@@ -518,6 +518,9 @@ Eine FAQ in Englisch findest du online unter:
 History
 *******
 
+@{i}V 45.0@{ui}
+        @{b}*@{ub} IDTAG_EmptyIfUnknown hinzugefügt
+
 @{i}V 44.4@{ui}
         @{b}*@{ub} AmigaOS 3.2.3 hinzugefügt
 

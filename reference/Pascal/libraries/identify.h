@@ -30,7 +30,7 @@ CONST  _IDTAGS      = $CD450000;
 
 { Generic library informations }
 
-CONST  IDENTIFYVERSION = 44;
+CONST  IDENTIFYVERSION = 45;
 
 TYPE   p_IdentifyBase = ^_IdentifyBase;
        _IdentifyBase  = Record
@@ -81,6 +81,10 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
                                         { delegated to other databases. FALSE }
                                         { to skip checking other databases }
                                         { (defaults to TRUE) [V40] }
+       IDTAG_EmptyIfUnknown = _IDTAGS+$13; { BOOL TRUE to get empty strings for }
+                                        { unknown manufacturers or boards. }
+                                        { FALSE to get numerical IDs. }
+                                        { (defaults to FALSE) [V45] }
 
 { Hardware description types }
 

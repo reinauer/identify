@@ -42,7 +42,7 @@ IDENTIFYNAME	MACRO
 		dc.b	"identify.library",0
 		ENDM
 
-IDENTIFYVERSION EQU	44
+IDENTIFYVERSION EQU	45
 
 	STRUCTURE IdentifyBase,0
 	STRUCT	ifyb_LibNode,LIB_SIZE
@@ -92,6 +92,10 @@ IDTAG_Delegate	EQU	_IDTAGS+$12	;BOOL TRUE if unknown boards shall be
 					; delegated to other databases. FALSE
 					; to skip checking other databases
 					; (defaults to TRUE) [V40]
+IDTAG_EmptyIfUnknown EQU _IDTAGS+$13	;BOOL TRUE to get empty strings for
+					; unknown manufacturers or boards.
+					; FALSE to get numerical IDs.
+					; (defaults to FALSE) [V45]
 
 *
 * Hardware description types

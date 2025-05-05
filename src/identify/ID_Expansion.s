@@ -97,7 +97,7 @@ exp_UnknownFlag	fo.l	1	; ^Flag if board is unknown
 exp_GotID	fo.b	1	; Is it a valid ID for searching?
 exp_Localize	fo.b	1	; Is the result to be localized?
 exp_Delegate	fo.b	1	; Delegate if unknown?
-exp_pad		fo.b	1	; (padding)
+exp_EmptyFlag	fo.b	1	; Empty strings for unknown manuf/board
 exp_StrLength	fo.w	1	; String length -1 (i.e. prepared for dbra)
 exp_Buffer	fo.b	10	; Temporary buffer
 exp_SIZEOF	fo.w	0
@@ -114,6 +114,7 @@ IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		move	#49,(exp_StrLength,a4)
 		st	(exp_Localize,a4)
 		st	(exp_Delegate,a4)
+		sf	(exp_EmptyFlag,a4)
 	;-- collect search parameters
 .tagloop	lea	(exp_TagItem,a4),a0
 		utils	NextTagItem
@@ -146,6 +147,8 @@ IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		beq	.unkflag
 		subq.l	#IDTAG_Delegate-IDTAG_UnknownFlag,d0	; IDTAG_Delegate ?
 		beq	.delegate
+		subq.l	#IDTAG_EmptyIfUnknown-IDTAG_Delegate,d0	; IDTAG_EmptyIfUnknown ?
+		beq	.emptyflag
 		bra	.tagloop		; unknown tag, ignore it
 	;-- set tags
 .configdev	move.l	d1,a5
@@ -195,6 +198,9 @@ IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		sne	(exp_Delegate,a4)
 		bra	.tagloop
 .unkflag	move.l	d1,(exp_UnknownFlag,a4)
+		bra	.tagloop
+.emptyflag	tst.l	d1
+		sne	(exp_EmptyFlag,a4)
 		bra	.tagloop
 	;-- prepare search
 .tagdone	tst.b	(exp_GotID,a4)		; is there anything to search?
@@ -337,6 +343,8 @@ IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 	;-- fast converter to number
 .to_num		lea	(exp_Buffer+10,a4),a0	; use buffer from end to start
 		clr.b	-(a0)			; set a terminator
+		tst.b	(exp_EmptyFlag,a4)	; keep empty, no number
+		bne	.keep_empty
 .divloop	divu	#10,d1			; divide by 10
 		swap	d1
 		add.b	#"0",d1			; remainder is the number
@@ -345,7 +353,7 @@ IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		swap	d1			; continue with the rest
 		bne	.divloop		; until value is zero
 		move.b	#"#",-(a0)		; prepend hash
-		rts
+.keep_empty	rts
 
 
 **

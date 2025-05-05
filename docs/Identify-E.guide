@@ -471,6 +471,9 @@ A FAQ can be found online here:
 History
 *******
 
+@{i}V 45.0@{ui}
+        @{b}*@{ub} Added IDTAG_EmptyIfUnknow
+
 @{i}V 44.4@{ui}
         @{b}*@{ub} Added AmigaOS 3.2.3
 

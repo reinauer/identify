@@ -18,11 +18,11 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 
-VERSION		EQU	44
-REVISION	EQU	4
+VERSION		EQU	45
+REVISION	EQU	0
 
 VERSNR		MACRO
-		dc.b	'44.4'
+		dc.b	'45.0'
 		ENDM
 
 DATE		MACRO

@@ -38,7 +38,7 @@
 /*
  * Generic library information
  */
-#define IDENTIFYVERSION (44)
+#define IDENTIFYVERSION (45)
 
 struct IdentifyBase {
   struct  Library ifyb_LibNode;
@@ -88,6 +88,11 @@ struct IdentifyBase {
                                           /* delegated to other databases. FALSE */
                                           /* to skip checking other databases */
                                           /* (defaults to TRUE) [V40] */
+#define IDTAG_EmptyIfUnknown (_IDTAGS+0x13) /* BOOL TRUE to get empty strings for */
+                                          /* unknown manufacturers or boards. */
+                                          /* FALSE to get numerical IDs. */
+                                          /* (defaults to FALSE) [V45] */
+
 
 /*
  * Hardware description types

@@ -193,6 +193,10 @@ identify.library/IdHardwareUpdate
                 set this flag to FALSE to avoid circle delegation that will
                 eventually crash the system because of a stack overflow.
 
+        IDTAG_EmptyIfUnknown    -- [V45] (BOOL) For unknown manufacturers or
+                expansions, TRUE will return empty strings instead of numbers.
+                The default is FALSE, which will return the numerical ID.
+
    EXAMPLE
         To check all expansion boards, you may use this code:
 
