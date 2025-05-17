@@ -30,6 +30,6 @@
 #pragma tagcall IdentifyBase IdExpansionTags 1e 801
 #pragma tagcall IdentifyBase IdFunctionTags 30 90803
 #pragma tagcall IdentifyBase IdHardwareTags 24 8002
-#pragma tagcall IdentifyBase IdHardwareNumTags 24 8002
+#pragma tagcall IdentifyBase IdHardwareNumTags 36 8002
 #pragma tagcall IdentifyBase IdFormatString 42 A09804
 #pragma tagcall IdentifyBase IdEstimateFormatSize 48 9802
