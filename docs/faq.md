@@ -2,9 +2,15 @@
 
 ## Expansions
 
-> **My board is not found, or not described correctly.**
+> **My Zorro board is not found, or not described correctly.**
 
-[See here](https://identify.shredzone.org/missing) about how to report a missing or incorrect expansion.
+[See here](https://identify.shredzone.org/missing) about how to report a missing or incorrect Zorro expansion.
+
+> **My PCI board is not found.**
+
+If no PCI boards are listed at all, make sure that the [openpci](https://aminet.net/package/driver/other/openpci68k) and [IdentifyPci](https://aminet.net/package/util/libs/IdentifyPci) packets are properly installed.
+
+If your PCI board isn't properly detected, please report it at [The PCI ID Repository](https://pci-ids.ucw.cz/). However, if the manufacturer is AMD or Intel, please [open an issue](https://codeberg.org/shred/identify/issues) here instead!
 
 > **I have made a new Amiga expansion. Can I register a manufacturer/product ID with you?**
 
@@ -46,7 +52,7 @@ Also note that 68EC040 and 68EC060 CPUs are not currently detected by Identify, 
 
 > **My Agnus 8375 is reported as Agnus 8372.**
 
-Yes, unfortunately the chips cannot be distinguished on software side.
+Yes, unfortunately these chips cannot be distinguished on software side.
 
 > **The PowerPC clock isn't accurate.**
 
@@ -88,7 +94,7 @@ In the source repository and the IdentifyDev package, you will find all files th
 
 > **I'd like to do a fork.**
 
-Well, you _can_ do that. But please consider contributing to the official project instead, so we won't have too many different versions circulating around. If you want to publish your fork to the AmiNet, please _do not use_ the "IdentifyDev" and "IdentifyUsr" package names, as they are reserved for official releases! Use own package names instead.
+Well, you _can_ do that. But please consider contributing to the official project instead, so we won't have too many different versions circulating around. If you want to publish your fork to the AmiNet, please _do not use_ the "IdentifyDev", "IdentifyPci", and "IdentifyUsr" package names, as they are reserved for official releases! Use own package names instead.
 
 > **What about Identify V37?**
 

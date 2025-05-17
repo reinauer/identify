@@ -8,13 +8,14 @@ The source code was closed, like almost all of my Amiga projects. I have now rev
 
 * Identifies expansion card names, alerts, and function call names
 * Gives information about your Amiga model, CPU, OS version, available memory, chipset, and much more...
-* Supports from AmigaOS 2.0 up to the latest AmigaOS 3.2.2
-* The expansion database contains 364 manufacturers and 708 boards
+* Supports from AmigaOS 2.0 up to the latest AmigaOS 3.2.3
+* The expansion database contains 369 manufacturers and 743 boards
 * Distinguishes between most GVP and Phase5 boards with unique ID
 * Tries to give at least a hint if the board name is not known yet
 * Fully FPGA, DraCo, and PowerPC compatible
 * Supports PowerUp and WarpOS
-* The library is fully localized (catalogs included: Deutsch, Italiano)
+* Supports PCI expansions (requires the "IdentifyPci" packet to be installed)
+* The library is fully localized (catalogs included: Deutsch, Français, Italiano)
 * Use the features in ARexx, with the included rexxidentify.library
 * English and German documentation
 * LGPLv3 licensed, open source
@@ -30,7 +31,9 @@ If you have questions about identify, maybe you will find answers [here](docs/fa
 
 ## Building from Source
 
-This project is mainly made to be built on Linux machines. However, with a few modifications it can also be built on AmigaOS and other operating systems.
+This project is mainly made to be built on Linux machines. However, with a few modifications it can also be built on AmigaOS (except the PCI database file, which requires Python) and other operating systems.
+
+A git submodule is used, so make sure to also clone the submodules, e.g. `git clone --recursive` for new clones, and `git submodule init; git submodule update` for existing checkouts.
 
 Requirements:
 
@@ -51,7 +54,7 @@ Then just invoke `make` to build the project. The compiled project can be found 
 
 `make release` will compile a release version in the `release` directory. This target is optimized for Linux, and might not run on other operating systems.
 
-`make pack` will create adf files for `IdentifyDev` and `IdentifyUsr` in the `release` directory. These files may be useful to install Identify on disk based systems, but are not part of the official release.
+`make pack` will create adf files for `IdentifyDev`, `IdentifyUsr` and `IdentifyPci` in the `release` directory. These files may be useful to install Identify on disk based systems, but are not part of the official release.
 
 Today's standard encoding is UTF-8. Unfortunately AmigaOS does not support this encoding, so the files in this project have different encodings depending on their purpose. The assembler and C files must use plain ASCII encoding, so they can be edited on Linux and Amiga without encoding problems. For special characters in strings, always use escape sequences. Do not use special characters in comments. `make check` will test if these files contain illegal characters. All purely Amiga-related files (like AmigaGuide or Catalog files) are expected to be ISO-8859-1 encoded. Then again, `README.md` (and other files related to the open source release) are UTF-8 encoded. If you are in doubt, use plain ASCII.
 
@@ -63,7 +66,7 @@ If you found a bug or have a feature request, feel free to [open an issue](https
 
 At the AmiNet, you will find [official binaries](http://aminet.net/package/util/libs/IdentifyUsr) and [development files](http://aminet.net/package/util/libs/IdentifyDev).
 
-**Please keep the "IdentifyDev" and "IdentifyUsr" package names reserved for official releases.** If you want to release a fork, use a different package name. But please consider contributing to the reference repository instead. This is better than having an unknown number of forks and different versions of the code floating around.
+**Please keep the "IdentifyDev", "IdentifyPci", and "IdentifyUsr" package names reserved for official releases.** If you want to release a fork, use a different package name. But please consider contributing to the reference repository instead. This is better than having an unknown number of forks and different versions of the code floating around.
 
 ## Translation
 
@@ -78,6 +81,8 @@ If you want to provide other translations, please contact me for assistance.
 ## Sync with your own Board Database?
 
 If you're managing an own board database in your project, feel invited to sync it with [this database](src/identify/ID_Database.s). However, it would only be fair if you then also share the boards that are missing here. Please open an issue, send a merge request, or just get in contact with me. Thank you!
+
+The PCI database is provided by [The PCI ID Repository](https://pci-ids.ucw.cz/). Please consult their project if you find missing or incorrect PCI board records, or if you want to use their database in your project. Note that the Identify database does not include PCI extensions from AMD and Intel to keep the database compact, as these extensions are mostly PC boards and processors.
 
 ## License
 

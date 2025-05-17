@@ -14,10 +14,13 @@ This packet is an extension of IdentifyUsr that contains an optional
 database for PCI expansions.
 
 You will only need this for machines with a PCI bridge and PCI boards.
-For Amigas without PCI bridge, it will just waste space on your hard
-drive.
+For Amigas without PCI bridge, it won't hurt, but it will just waste
+space on your hard drive.
 
-Please copy the contained pci.db file to your S: directory.
+Installation:
+
+  - Copy the contained pci.db file to your S: directory.
+  - Install openpci by Thomas Richter.
 
 Identify is Open Source Software. The source code is distributed under
 the LGPLv3 Lesser Gnu Public License.
