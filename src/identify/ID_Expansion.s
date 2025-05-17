@@ -106,12 +106,12 @@ exp_SIZEOF	fo.w	0
 IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		link	a4,#exp_SIZEOF
 	;-- clear the structure
-		moveq	#((exp_ConfigDev-exp_StrLength)/2)-1,d0
-		lea	(exp_ConfigDev,a4),a1
+		moveq	#(-exp_SIZEOF/2)-1,d0
+		move.l	a4,a1
 .clear		clr	-(a1)
 		dbra	d0,.clear
 		move.l	a0,(exp_TagItem,a4)
-		move	#49,(exp_StrLength,a4)
+		move	#IDENTIFYBUFLEN-1,(exp_StrLength,a4)
 		st	(exp_Localize,a4)
 		st	(exp_Delegate,a4)
 		sf	(exp_EmptyFlag,a4)
