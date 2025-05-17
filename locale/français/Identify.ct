@@ -75,7 +75,7 @@ DSP
 ; DSP
 ;
 MSG_EXP_BUSBRIDGE
-passerelle ISA
+passerelle de bus
 ; ISA bus bridge
 ;
 MSG_EXP_BRIDGE
@@ -221,6 +221,9 @@ interface souris
 MSG_EXP_SATAHD
 contrôleur DD SATA
 ; SATA controller
+;
+MSG_EXP_VIRTUAL
+virtuelle
 ;
 MSG_ALERT_RECOVERY
 recouvrable

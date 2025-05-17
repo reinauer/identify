@@ -440,6 +440,10 @@ IDCID_INTERFACE		EQU	44	; some interface
 IDCID_MFMHD		EQU	45	; MFM HD controller
 IDCID_FLOPPY		EQU	46	; floppy disk controller
 IDCID_USB		EQU	47	; USB interface
+IDCID_KEYBOARD		EQU	48	; keyboard interface
+IDCID_MOUSE		EQU	49	; mouse interface
+IDCID_SATAHD		EQU	50	; SATA controller
+IDCID_VIRTUAL		EQU	51	; virtual extension
 	; Be prepared to get other numbers as well. In this case you
 	; should assume IDCID_MISC.
 

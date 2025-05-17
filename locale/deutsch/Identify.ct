@@ -76,7 +76,7 @@ MSG_EXP_DSP
 DSP
 ;
 MSG_EXP_BUSBRIDGE
-ISA-Bus-Brücke
+Bus-Brücke
 ;
 MSG_EXP_BRIDGE
 PC-Brücke
@@ -185,6 +185,9 @@ Mausinterface
 ;
 MSG_EXP_SATAHD
 SATA-Kontroller
+;
+MSG_EXP_VIRTUAL
+virtuell
 ;
 MSG_ALERT_RECOVERY
 Recoverable

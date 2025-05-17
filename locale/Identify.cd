@@ -80,7 +80,7 @@ MSG_EXP_DSP             (//49)
 DSP
 ;
 MSG_EXP_BUSBRIDGE       (//49)
-ISA bus bridge
+bus bridge
 MSG_EXP_BRIDGE          (//49)
 PC bridge
 ;
@@ -162,6 +162,8 @@ MSG_EXP_MOUSE           (//49)
 mouse interface
 MSG_EXP_SATAHD          (//49)
 SATA controller
+MSG_EXP_VIRTUAL         (//49)
+virtual
 ;
 ;================================================================
 ;       ALERT GENERAL ERROR (1024..)

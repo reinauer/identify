@@ -384,6 +384,54 @@ manuf_tab	tabinit
 		board	  019,"Furia EC020",		MSG_EXP_TURBO
 		endmf	01576
 
+		; Virtual expansions, see openpci docs
+		manuf	01729,"openpci A1200 Mediator Bridge"
+		board	  000,"PCI Bridge",		MSG_EXP_VIRTUAL
+		board	  001,"Configuration Area",	MSG_EXP_VIRTUAL
+		board	  002,"Memory Area",		MSG_EXP_VIRTUAL
+		board	  003,"Memory Mapped Registers",MSG_EXP_VIRTUAL
+		board	  004,"I/O Area",		MSG_EXP_VIRTUAL
+		board	  005,"Expansion ROM",		MSG_EXP_VIRTUAL
+		board	  006,"Legacy I/O Area",	MSG_EXP_VIRTUAL
+		board	  007,"Legacy VGA Area",	MSG_EXP_VIRTUAL
+		endmf	01729
+
+		; Virtual expansions, see openpci docs
+		manuf	01730,"openpci A4000 Mediator Bridge"
+		board	  000,"PCI Bridge",		MSG_EXP_VIRTUAL
+		board	  001,"Configuration Area",	MSG_EXP_VIRTUAL
+		board	  002,"Memory Area",		MSG_EXP_VIRTUAL
+		board	  003,"Memory Mapped Registers",MSG_EXP_VIRTUAL
+		board	  004,"I/O Area",		MSG_EXP_VIRTUAL
+		board	  005,"Expansion ROM",		MSG_EXP_VIRTUAL
+		board	  006,"Legacy I/O Area",	MSG_EXP_VIRTUAL
+		board	  007,"Legacy VGA Area",	MSG_EXP_VIRTUAL
+		endmf	01730
+
+		; Virtual expansions, see openpci docs
+		manuf	01731,"openpci Prometheus Bridge"
+		board	  000,"PCI Bridge",		MSG_EXP_VIRTUAL
+		board	  001,"Configuration Area",	MSG_EXP_VIRTUAL
+		board	  002,"Memory Area",		MSG_EXP_VIRTUAL
+		board	  003,"Memory Mapped Registers",MSG_EXP_VIRTUAL
+		board	  004,"I/O Area",		MSG_EXP_VIRTUAL
+		board	  005,"Expansion ROM",		MSG_EXP_VIRTUAL
+		board	  006,"Legacy I/O Area",	MSG_EXP_VIRTUAL
+		board	  007,"Legacy VGA Area",	MSG_EXP_VIRTUAL
+		endmf	01731
+
+		; Virtual expansions, see openpci docs
+		manuf	01733,"openpci G-Rex Bridge"
+		board	  000,"PCI Bridge",		MSG_EXP_VIRTUAL
+		board	  001,"Configuration Area",	MSG_EXP_VIRTUAL
+		board	  002,"Memory Area",		MSG_EXP_VIRTUAL
+		board	  003,"Memory Mapped Registers",MSG_EXP_VIRTUAL
+		board	  004,"I/O Area",		MSG_EXP_VIRTUAL
+		board	  005,"Expansion ROM",		MSG_EXP_VIRTUAL
+		board	  006,"Legacy I/O Area",	MSG_EXP_VIRTUAL
+		board	  007,"Legacy VGA Area",	MSG_EXP_VIRTUAL
+		endmf	01733
+
 		manuf	01761,"Great Valley Products"
 		board	  008,"Impact Series I",	MSG_EXP_RAMSCSIHD ; A2000 2MB RAM Board
 		endmf	01761

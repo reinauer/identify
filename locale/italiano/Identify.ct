@@ -99,11 +99,11 @@ DSP
 ; DSP
 ;
 MSG_EXP_BUSBRIDGE
-ISA bus bridge
+ponte di bus
 ; ISA bus bridge
 ;
 MSG_EXP_BRIDGE
-PC bridge
+ponte PC
 ; PC bridge
 ;
 MSG_EXP_EMULATOR
@@ -245,6 +245,10 @@ interfaccia mouse
 MSG_EXP_SATAHD
 controller SATA
 ; SATA controller
+;
+MSG_EXP_VIRTUAL
+virtuale
+;
 ;
 ;================================================================
 ;       ALERT GENERAL ERROR (1024..)
