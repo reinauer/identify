@@ -408,6 +408,10 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDCID_MFMHD       = 45;  {  MFM HD controller }
        IDCID_FLOPPY      = 46;  {  floppy disk controller }
        IDCID_USB         = 47;  {  USB interface }
+       IDCID_KEYBOARD    = 48;  {  keyboard interface }
+       IDCID_MOUSE       = 49;  {  mouse interface }
+       IDCID_SATAHD      = 50;  {  SATA controller }
+       IDCID_VIRTUAL     = 51;  {  virtual extension [V45] }
         { Be prepared to get other numbers as well. In this case you }
         { should assume IDCID_MISC. }
 

@@ -436,6 +436,10 @@ struct IdentifyBase {
 #define IDCID_MFMHD     (45)    /*  MFM HD controller */
 #define IDCID_FLOPPY    (46)    /*  floppy disk controller */
 #define IDCID_USB       (47)    /*  USB interface */
+#define IDCID_KEYBOARD  (48)    /*  keyboard interface */
+#define IDCID_MOUSE     (49)    /*  mouse interface */
+#define IDCID_SATAHD    (50)    /*  SATA controller */
+#define IDCID_VIRTUAL   (51)    /*  virtual extension [V45] */
     /*  Be prepared to get other numbers as well. In this case you */
     /*  should assume IDCID_MISC. */
 

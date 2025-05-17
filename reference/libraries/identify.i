@@ -443,7 +443,7 @@ IDCID_USB		EQU	47	; USB interface
 IDCID_KEYBOARD		EQU	48	; keyboard interface
 IDCID_MOUSE		EQU	49	; mouse interface
 IDCID_SATAHD		EQU	50	; SATA controller
-IDCID_VIRTUAL		EQU	51	; virtual extension
+IDCID_VIRTUAL		EQU	51	; virtual extension [V45]
 	; Be prepared to get other numbers as well. In this case you
 	; should assume IDCID_MISC.
 

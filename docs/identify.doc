@@ -223,7 +223,8 @@ identify.library/IdHardwareUpdate
 
    NOTE
         If the manufacturer or the product is not known, the string will be
-        filled with its number.
+        filled with its number (unless the IDTAG_EmptyIfUnknown tag is set
+        to TRUE).
 
         This call is guaranteed to preserve all registers except D0.
 
@@ -976,12 +977,21 @@ identify.library/IdHardwareUpdate
         not use this function while multitasking is forbidden!
 
         If the manufacturer or the product is not known, the string will be
-        filled with the hex representation of its respective ID.
+        filled with the hex representation of its respective ID (unless
+        IDTAG_EmptyIfUnknown tag is set to TRUE).
+
+        A few manufacturer or product names tend to exceed the default
+        buffer size of 50 characters, and are then truncated. You can
+        always provide larger buffers, and set IDTAG_StrLength accordingly.
 
         This call is guaranteed to preserve all registers except D0.
 
         IF IDTAG_Expansion is used, the openpci.library must be present.
         Otherwise an IDERR_NOPCILIB error is returned.
+
+        The IDERR_NOPCILIB error is also returned if the openpci.library
+        is present, but no supported PCI bridge board was found. This is
+        due to technical reasons.
 
         The PCI database bases on https://pci-ids.ucw.cz/.
 
