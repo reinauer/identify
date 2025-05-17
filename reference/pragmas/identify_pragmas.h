@@ -26,6 +26,7 @@
 #pragma libcall IdentifyBase IdHardwareUpdate 3c 00
 #pragma libcall IdentifyBase IdFormatString 42 A09804
 #pragma libcall IdentifyBase IdEstimateFormatSize 48 9802
+#pragma libcall IdentifyBase IdPciExpansion 4e 801
 #pragma tagcall IdentifyBase IdAlertTags 2a 8002
 #pragma tagcall IdentifyBase IdExpansionTags 1e 801
 #pragma tagcall IdentifyBase IdFunctionTags 30 90803
@@ -33,3 +34,4 @@
 #pragma tagcall IdentifyBase IdHardwareNumTags 36 8002
 #pragma tagcall IdentifyBase IdFormatString 42 A09804
 #pragma tagcall IdentifyBase IdEstimateFormatSize 48 9802
+#pragma tagcall IdentifyBase IdPciExpansionTags 4e 801

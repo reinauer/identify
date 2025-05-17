@@ -1,7 +1,7 @@
 *
 * identify.library
 *
-* Copyright (C) 2021 Richard "Shred" Koerber
+* Copyright (C) 2025 Richard "Shred" Koerber
 *	http://identify.shredzone.org
 *
 * This program is free software: you can redistribute it and/or modify
@@ -17,16 +17,15 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-##base _IdentifyBase
-##bias 30
-##public
-IdExpansion(TagList)(a0)
-IdHardware(Type,TagList)(d0,a0)
-IdAlert(ID,TagList)(d0,a0)
-IdFunction(LibName,Offset,TagList)(a0,d0,a1)
-IdHardwareNum(Type,TagList)(d0,a0)
-IdHardwareUpdate()()
-IdFormatString(String,Buffer,Length,Tags)(a0,a1,d0,a2)
-IdEstimateFormatSize(String,Tags)(a0,a1)
-IdPciExpansion(TagList)(a0)
-##end
+
+		IFND	PCIREADER_I
+PCIREADER_I	SET	1
+
+PCI_SUCCESS		EQU	0	; No error
+PCI_MANUFNOTFOUND	EQU	-1	; Unknown manufacturer
+PCI_PRODNOTFOUND	EQU	-2	; Known manufacturer, unknown product
+PCI_BADVERSION		EQU	-3	; Bad version of S:pci.db
+PCI_BADFILE		EQU	-4	; S:pci.db seems to be corrupted
+PCI_NODATABASE		EQU	-5	; No S:pci.db found
+
+		ENDC

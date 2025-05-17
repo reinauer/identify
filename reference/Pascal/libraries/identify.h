@@ -85,6 +85,8 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
                                         { unknown manufacturers or boards. }
                                         { FALSE to get numerical IDs. }
                                         { (defaults to FALSE) [V45] }
+       IDTAG_PciDev      = _IDTAGS+$14; { (struct pci_dev *) PCI-Dev }
+                                        { structure to be evaluated [V45] }
 
 { Hardware description types }
 
@@ -420,5 +422,8 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDERR_OFFSET = -5;    { Function offset not found }
        IDERR_DONE = -6;      { Done with traversing (not an error) }
                              { -7 is obsolete }
+       IDERR_NOPCIDB = -8;   { No PCI database file found [V45] }
+       IDERR_BADPCIDB = -9;  { Bad PCI database file [V45] }
+       IDERR_NOPCILIB = -10; { No openpci.library or PCI bridge found [V45] }
 
 {$endif}

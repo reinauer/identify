@@ -78,6 +78,7 @@ IDTAG_Expansion EQU	_IDTAGS+$0C	;(struct ConfigDev **) for a
 					; the variable with NULL.
 IDTAG_ClassID	EQU	_IDTAGS+$0E	;ULONG * class ID of the provided
 					; expansion board (see below) [V8]
+					;UBYTE PCI class ID [V45]
 IDTAG_Localize	EQU	_IDTAGS+$0F	;BOOL return localized strings
 					; (defaults to TRUE) [V8]
 IDTAG_NULL4NA	EQU	_IDTAGS+$10	;BOOL return NULL for not available,
@@ -96,6 +97,8 @@ IDTAG_EmptyIfUnknown EQU _IDTAGS+$13	;BOOL TRUE to get empty strings for
 					; unknown manufacturers or boards.
 					; FALSE to get numerical IDs.
 					; (defaults to FALSE) [V45]
+IDTAG_PciDev 	EQU	_IDTAGS+$14	;(struct pci_dev *) PCI-Dev
+					; structure to be evaluated [V45]
 
 *
 * Hardware description types
@@ -451,6 +454,9 @@ IDERR_NOMEM	EQU	-3	;Not enough memory
 IDERR_NOFD	EQU	-4	;No fitting FD file found
 IDERR_OFFSET	EQU	-5	;Function offset not found
 IDERR_DONE	EQU	-6	;Done with traversing (not an error)
-				;-7 is obsolete
+			; -7 is obsolete
+IDERR_NOPCIDB	EQU	-8	;No PCI database file found [V45]
+IDERR_BADPCIDB	EQU	-9	;Bad PCI database file [V45]
+IDERR_NOPCILIB	EQU	-10	;No openpci.library or PCI bridge found [V45]
 
 	ENDC

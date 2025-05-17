@@ -41,10 +41,11 @@ Requirements:
 * [AmigaOS NDK 3.2](https://www.hyperion-entertainment.com/index.php/downloads?view=files&parent=40), unpacked on your build machine
 * [MUI](http://sasg.com/mui/download.html) by Stefan Stuntz, includes unpacked on your build machine
 * [mmu.library](http://aminet.net/package/docs/misc/MuManual) by Thomas Richter, includes unpacked on your build machine
+* [openpci.library](http://aminet.net/package/driver/other/openpci68k) by Thomas Richter, includes unpacked on your build machine
 * [lha](https://github.com/jca02266/lha) (compiled with `--enable-multibyte-filename=auto` option, which is the default)
 * [AmiTools](https://github.com/cnvogelg/amitools) (optional, for the `pack` target only)
 
-Set the `AMIGA_NDK` env variable to the location of the unpacked `NDK3.2` directory on your build machine. Also set `AMIGA_INCLUDES` to the location of 3rd party include files, where the MUI includes can be found.
+Set the `AMIGA_NDK` env variable to the location of the unpacked `NDK3.2` directory on your build machine. Also set `AMIGA_INCLUDES` to the location of 3rd party include files, where the MUI, `mmu.library`, and `openpci.library` includes can be found.
 
 Then just invoke `make` to build the project. The compiled project can be found in the `build` directory.
 

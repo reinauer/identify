@@ -92,6 +92,8 @@ struct IdentifyBase {
                                           /* unknown manufacturers or boards. */
                                           /* FALSE to get numerical IDs. */
                                           /* (defaults to FALSE) [V45] */
+#define IDTAG_PciDev      (_IDTAGS+0x14)  /* (struct pci_dev *) PCI-Dev */
+                                          /* structure to be evaluated [V45] */
 
 
 /*
@@ -449,5 +451,8 @@ struct IdentifyBase {
 #define IDERR_OFFSET    (-5)    /* Function offset not found */
 #define IDERR_DONE      (-6)    /* Done with traversing (not an error) */
                                 /* -7 is obsolete */
+#define IDERR_NOPCIDB   (-8)    /* No PCI database file found [V45] */
+#define IDERR_BADPCIDB  (-9)    /* Bad PCI database file [V45] */
+#define IDERR_NOPCILIB  (-10)   /* No openpci.library or PCI bridge found [V45] */
 
 #endif

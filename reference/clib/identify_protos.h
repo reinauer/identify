@@ -33,3 +33,5 @@ STRPTR IdHardwareTags(ULONG, ULONG,...);
 ULONG IdHardwareNum(ULONG, struct TagItem *);
 ULONG IdHardwareNumTags(ULONG, ULONG,...);
 void IdHardwareUpdate(void);
+LONG IdPciExpansion(struct TagItem *);
+LONG IdPciExpansionTags(ULONG,...);

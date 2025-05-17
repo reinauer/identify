@@ -232,7 +232,8 @@ identify.library/IdHardwareUpdate
         issue at https://identify.shredzone.org, or send me an e-mail.
 
    SEE ALSO
- 
+        IdPciExpansion()
+
 identify.library/IdFormatString
    NAME
         IdFormatString - format a hardware string (V11)
@@ -882,4 +883,109 @@ identify.library/IdHardwareUpdate
    SEE ALSO
         IdHardware(), IdHardwareNum()
  
+identify.library/IdPciExpansion
+
+   NAME
+        IdPciExpansion - get name of PCI expansion board (V45)
+
+   SYNOPSIS
+        Error = IdPciExpansion(TagList)
+        D0.l                  A0.l
+
+        LONG IdPciExpansion(struct TagItem *);
+
+        Error = IdPciExpansionTags(Tag1,...)
+
+        LONG IdPciExpansionTags(ULONG,...);
+
+   FUNCTION
+        Gets the manufacturer and product of a PCI expansion.
+
+   INPUTS
+        TagList       -- (struct TagItem *) tags that describe further
+                         options.
+   RESULT
+        Error         -- (LONG) error code, or 0 if everything went fine.
+
+                IDERR_NOLENGTH  -- IDTAG_StrLength has been set to 0!
+                IDERR_BADID     -- IDTAG_ManufID and IDTAG_ProdID were
+                        out of range or one of them was missing.
+                IDERR_DONE      -- Checked all expansions using the
+                        IDTAG_Expansion tag. This is not really an error.
+                IDERR_NOPCIDB   -- The S:pci.db file is not installed.
+                IDERR_BADPCIDB  -- The S:pci.db file is either outdated or
+                        corrupted, and should be reinstalled.
+                IDERR_NOPCILIB  -- The openpci.library must be installed for
+                        this operation, but was not found.
+
+   TAGS
+        IDTAG_PciDev            -- (struct pci_dev *) pci_dev structure
+                containing all information. Prefer to use this tag if you
+                have a pci_dev structure available.
+
+        IDTAG_ManufID           -- (UWORD) Manufacturer ID if pci_dev is not
+                provided. You must also provide IDTAG_ProdID!
+
+        IDTAG_ProdID            -- (UWORD) Product ID if pci_dev is not
+                provided. You must also provide IDTAG_ManufID!
+
+        IDTAG_ClassID           -- (UBYTE) Class ID if pci_dev is not
+                provided.
+
+        IDTAG_StrLength         -- (UWORD) Buffer length, including
+                termination. Defaults to 50.
+
+        IDTAG_ManufStr          -- (STRPTR) Pointer to a buffer space for the
+                manufacturer name. You may skip this tag if you do not want
+                to get this string.
+
+        IDTAG_ProdStr           -- (STRPTR) Pointer to a buffer space for the
+                product name. You may skip this tag if you do not want to get
+                this string.
+
+        IDTAG_ClassStr          -- (STRPTR) Pointer to a buffer space for the
+                product class. You may skip this tag if you do not want to get
+                this string.
+
+        IDTAG_Expansion         -- (struct pci_dev **) Use this tag to
+                easily traverse through the PCI expansion board list. Init the
+                pointed variable with NULL. After each call, you will find
+                the current pci_dev pointer in this variable. If you are
+                done, this function returns IDERR_DONE and the variable is set
+                to NULL. See example.
+
+        IDTAG_Delegate          -- (BOOL) TRUE to delegate unknown PCI boards
+                to other expansion databases (if present). FALSE to immediately
+                report unknown boards as missing. Defaults to TRUE. If your
+                project delegates unknown boards to identify, set this flag to
+                FALSE to avoid circle delegation that will eventually crash
+                the system because of a stack overflow.
+
+                As of now, identify does not delegate unknown boards, so this
+                tag is ignored. Please use it for future compatibility.
+
+        IDTAG_EmptyIfUnknown    -- (BOOL) For unknown manufacturers or
+                expansions, TRUE will return empty strings instead of numbers.
+                The default is FALSE, which will return the numerical ID.
+
+   NOTE
+        The PCI database is located in a file called S:pci.db. PCI boards
+        are only identified if the database file is present.
+
+        Invocation of this function involves access to the file system. Do
+        not use this function while multitasking is forbidden!
+
+        If the manufacturer or the product is not known, the string will be
+        filled with the hex representation of its respective ID.
+
+        This call is guaranteed to preserve all registers except D0.
+
+        IF IDTAG_Expansion is used, the openpci.library must be present.
+        Otherwise an IDERR_NOPCILIB error is returned.
+
+        The PCI database bases on https://pci-ids.ucw.cz/.
+
+   SEE ALSO
+        IdExpansion()
+
 

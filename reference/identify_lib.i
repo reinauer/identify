@@ -26,3 +26,4 @@ _LVOIdHardwareNum       EQU -54
 _LVOIdHardwareUpdate    EQU -60
 _LVOIdFormatString      EQU -66
 _LVOIdEstimateFormatSize EQU -72
+_LVOIdPciExpansion      EQU -78

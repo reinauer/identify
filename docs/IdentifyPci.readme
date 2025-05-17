@@ -1,0 +1,30 @@
+Short:        Identify hardware and more
+Author:       Richard 'Shred' Koerber
+Uploader:     aminet@shredzone.de (Richard Koerber)
+Type:         util/libs
+Version:      45.0
+Requires:     AmigaOS 2.0 or higher
+Architecture: m68k-amigaos >= 2.0.4
+
+License:      GNU Lesser General Public License v3
+Source:       https://codeberg.org/shred/identify
+Website:      https://identify.shredzone.org
+
+This packet is an extension of IdentifyUsr that contains an optional
+database for PCI expansions.
+
+You will only need this for machines with a PCI bridge and PCI boards.
+For Amigas without PCI bridge, it will just waste space on your hard
+drive.
+
+Please copy the contained pci.db file to your S: directory.
+
+Identify is Open Source Software. The source code is distributed under
+the LGPLv3 Lesser Gnu Public License.
+
+Reference repository: https://codeberg.org/shred/identify
+
+The source code is intentionally not part of this package. If you want
+to modify the code, please consider contributing to the reference
+repository. This is better than having an unknown number of forks and
+different versions of the code floating around.

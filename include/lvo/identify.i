@@ -7,6 +7,7 @@ _IDNTIdHardwareNum	EQU	-54
 _IDNTIdHardwareUpdate	EQU	-60
 _IDNTIdFormatString	EQU	-66
 _IDNTIdEstimateFormatSize EQU	-72
+_IDNTIdPciExpansion	EQU	-78
 
 idfy		MACRO
 		IFNC	"\0","q"

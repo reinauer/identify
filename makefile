@@ -30,12 +30,14 @@ DOCP      = docs
 ID_OBJS   = $(OBJP)/ID_Main.o $(OBJP)/ID_Support.o $(OBJP)/ID_Hardware.o \
 			$(OBJP)/ID_Locale.o $(OBJP)/ID_Functions.o $(OBJP)/ID_Expansion.o \
 			$(OBJP)/ID_Database.o $(OBJP)/ID_Clockfreq.o $(OBJP)/ID_Alerts.o \
+			$(OBJP)/ID_PCI.o $(OBJP)/pcireader.o $(OBJP)/pciclasses.o \
 			$(OBJP)/ppcgetinfo.o $(OBJP)/ppccpuclock.o \
 			$(OBJP)/ID_EndCode.o
 
 ID_OBJS_000 = $(OBJP)/000/ID_Main.o $(OBJP)/000/ID_Support.o $(OBJP)/000/ID_Hardware.o \
 			$(OBJP)/000/ID_Locale.o $(OBJP)/000/ID_Functions.o $(OBJP)/000/ID_Expansion.o \
 			$(OBJP)/000/ID_Database.o $(OBJP)/000/ID_Clockfreq.o $(OBJP)/000/ID_Alerts.o \
+			$(OBJP)/000/ID_PCI.o $(OBJP)/pcireader.o $(OBJP)/pciclasses.o \
 			$(OBJP)/ppcgetinfo.o $(OBJP)/ppccpuclock.o \
 			$(OBJP)/ID_EndCode.o
 
@@ -73,10 +75,15 @@ all: $(OBJP) \
 		$(OBJP)/rexxidentify.library \
 		$(OBJP)/expname.library \
 		$(OBJP)/Function $(OBJP)/Guru $(OBJP)/InstallIfy $(OBJP)/ListExp \
-		$(OBJP)/ExpansionMUI $(OBJP)/MyExp
+		$(OBJP)/ExpansionMUI $(OBJP)/MyExp \
+		$(SRCP)/identify/pci/database.s \
+		$(SRCP)/identify/pci/pciclasses.s \
+		$(OBJP)/pci.db \
+		$(OBJP)/pcitest
 
 clean:
-	rm -rf $(OBJP) $(RELP) $(REFP)/inline/identify_protos.h $(REFP)/inline/identify.h $(REFP)/proto/identify.h
+	rm -rf $(OBJP) $(RELP) $(REFP)/inline/identify_protos.h $(REFP)/inline/identify.h \
+		$(REFP)/proto/identify.h $(SRCP)/identify/pci/database.s $(SRCP)/identify/pci/pciclasses.s
 
 release: clean all
 	cp -r $(DSTP) $(RELP)				# Create base structure and static files
@@ -119,16 +126,23 @@ release: clean all
 	cp $(OBJP)/ExpansionMUI $(RELP)/IdentifyDev/Identify/examples/
 	cp $(OBJP)/MyExp $(RELP)/IdentifyDev/Identify/examples/
 
+	mkdir -p $(RELP)/IdentifyPci/Identify/s
+	cp $(OBJP)/pci.db $(RELP)/IdentifyPci/Identify/s/
+
 	rm -f $(OBJP)/IdentifyUsr.lha							# Package
 	cd $(RELP)/IdentifyUsr ; lha c --system-kanji-code=cap -q1 ../IdentifyUsr.lha *
 	cp $(DOCP)/IdentifyUsr.readme $(RELP)/
 	rm -f $(OBJP)/IdentifyDev.lha
 	cd $(RELP)/IdentifyDev ; lha c --system-kanji-code=cap -q1 ../IdentifyDev.lha *
 	cp $(DOCP)/IdentifyDev.readme $(RELP)/
+	rm -f $(OBJP)/IdentifyPci.lha
+	cd $(RELP)/IdentifyPci ; lha c --system-kanji-code=cap -q1 ../IdentifyPci.lha *
+	cp $(DOCP)/IdentifyPci.readme $(RELP)/
 
 pack: release
 	xdftool $(RELP)/IdentifyUsr.adf pack $(RELP)/IdentifyUsr
 	xdftool $(RELP)/IdentifyDev.adf pack $(RELP)/IdentifyDev
+	xdftool $(RELP)/IdentifyPci.adf pack $(RELP)/IdentifyPci
 
 check:
 	# Check for umlauts and other characters that are not platform neutral.
@@ -201,10 +215,16 @@ $(OBJP)/%.o: $(SRCP)/identify/%.s
 $(OBJP)/000/%.o: $(SRCP)/identify/%.s
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@ $<
 
+$(OBJP)/pciclasses.o: $(SRCP)/identify/pci/pciclasses.s
+	vasmm68k_mot $(AOPTS) -L $@.lst -o $@ $<
+
 $(OBJP)/%.o: $(SRCP)/identify/ppc/%.s
 	vasmppc_std -Fhunk -L $@.lst -o $@ $<
 
 $(OBJP)/%.o: $(SRCP)/identify/ppc/%.c
+	vc -c $(COPTS) -o=$@ $<
+
+$(OBJP)/pcireader.o: $(SRCP)/identify/pci/pcireader.c
 	vc -c $(COPTS) -o=$@ $<
 
 #-- expname.library
@@ -225,6 +245,16 @@ $(OBJP)/%.o: $(SRCP)/rexxidentify/%.s
 $(OBJP)/%: $(SRCP)/tools/%.s
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@.o $<
 	vlink $(LOPTS) -o $@ -s $@.o
+
+#-- pci database
+$(SRCP)/identify/pci/database.s $(SRCP)/identify/pci/pciclasses.s: pciids/pci.ids
+	./update-pci.py
+
+$(OBJP)/pci.db: $(SRCP)/identify/pci/database.s
+	vasmm68k_mot -esc -Fbin -o $@ $<
+
+$(OBJP)/pcitest: $(SRCP)/test/pcitest.c $(OBJP)/pcireader.o
+	vc $(COPTS) -o=$@ $^
 
 #-- examples
 $(OBJP)/ExpansionMUI: $(SRCP)/examples/ExpansionMUI.c

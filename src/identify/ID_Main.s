@@ -28,6 +28,7 @@
 		INCLUDE dos/dos.i
 		INCLUDE libraries/configregs.i
 		INCLUDE libraries/configvars.i
+		INCLUDE	libraries/openpci.i
 		INCLUDE lvo/exec.i
 		INCLUDE lvo/expansion.i
 		INCLUDE lvo/dos.i
@@ -97,6 +98,7 @@ FuncTab		dc.l	LOpen,LClose,LExpunge,LNull	; Standard functions
 		dc.l	IdHardwareUpdate		; -60
 		dc.l	IdFormatString			; -66
 		dc.l	IdEstimateFormatSize		; -72
+		dc.l	IdPciExpansion			; -78
 		dc.l	-1
 
 
@@ -156,11 +158,16 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 		moveq	#40,d0
 		exec	OpenLibrary
 		move.l	d0,mmubase		; also OK if it was not found
+		lea	(.openpciname,PC),a1
+		moveq	#MIN_OPENPCI_VERSION,d0
+		exec	OpenLibrary
+		move.l	d0,openpcibase		; also OK if it was not found
 	;-- initialize modules
 		bsr	InitLocale
 		bsr	InitExpansion
 		bsr	InitHardware
 		bsr	InitFunctions
+		bsr	InitPCI
 	;-- done
 		move.l	a5,d0
 .exit		movem.l (SP)+,d1-d7/a0-a6
@@ -176,6 +183,7 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 .gfxname	dc.b	"graphics.library",0
 .boardsname	dc.b	"boards.library",0
 .mmuname	dc.b	"mmu.library",0
+.openpciname	dc.b	"openpci.library",0
 		even
 
 
@@ -226,12 +234,17 @@ LExpunge	movem.l d7/a5-a6,-(SP)
 		move.l	a5,a1
 		exec	Remove
 	;-- exit modules
+		bsr	ExitPCI
 		bsr	ExitFunctions
 		bsr	ExitHardware
 		bsr	ExitExpansion
 		bsr	ExitLocale
 	;-- close resources
-		move.l	(mmubase,PC),d0
+		move.l	(openpcibase,PC),d0
+		beq	.noPci
+		move.l	d0,a1
+		exec	CloseLibrary
+.noPci		move.l	(mmubase,PC),d0
 		beq	.noMmu
 		move.l	d0,a1
 		exec	CloseLibrary
@@ -269,7 +282,7 @@ LNull		moveq	#0,d0
 
 
 		public	identifybase, utilsbase, dosbase, expbase, execbase, gfxbase
-		public	boardsbase, mmubase, _SysBase
+		public	boardsbase, mmubase, openpcibase, _SysBase, _DOSBase
 
 		even
 identifybase	dc.l	0
@@ -280,5 +293,7 @@ expbase		dc.l	0
 gfxbase		dc.l	0
 boardsbase	dc.l	0
 mmubase		dc.l	0
+openpcibase	dc.l	0
 _SysBase	EQU	execbase
+_DOSBase	EQU	dosbase
 		even
