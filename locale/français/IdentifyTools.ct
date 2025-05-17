@@ -1,4 +1,4 @@
-## version $VER: identifytools.catalog 40.0 (03-10-2022) - By Fil. BRANDAO
+## version $VER: identifytools.catalog 41.0 (11.05.2025) - By Fil. BRANDAO
 ## codeset 0
 ## language français
 ;
@@ -128,6 +128,15 @@ MSG_LISTEXP_UNKNOWN
 ; At least one expansion in your system is not known yet. Please send this\n\
 ; output to the Identify project, see: %s .\n\
 ; Your help is appreciated. Thank you!\n\n
+;
+MSG_LISTPCI_LISTTITLE
+\n\
+** EXTENSIONS PCI **\n\n\
+N°  ID       Fabriquant           Produit\n\
+----------------------------------------------------------------------------\n
+;
+MSG_LISTPCI_BOARDLINE
+%2ld %04lx/%04lx %-20s %-20s %s\n
 ;
 MSG_GURU_HAIL
  -- Guru V%s -- %s\n\n

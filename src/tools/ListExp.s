@@ -31,6 +31,7 @@
 		INCLUDE libraries/commodities.i
 		INCLUDE libraries/commodities_private.i
 		INCLUDE libraries/locale.i
+		INCLUDE libraries/openpci.i
 		INCLUDE lvo/exec.i
 		INCLUDE lvo/dos.i
 		INCLUDE lvo/identify.i
@@ -122,6 +123,7 @@ Start	;-- open resources
 		bra	.done
 .nospec		bsr	HardList
 		bsr	ExpList
+		bsr	PciList
 		move.l	(ArgList+arg_Full,PC),d0 	; also Commodities
 		beq	.nocx
 		bsr	CdityList
@@ -390,6 +392,59 @@ ExpList		move.l	SP,d7			; remember stack
 		move.l	#MSG_LISTEXP_BOARDLINE_WIDE,d0
 .nowideline	bsr	GetLocString
 		move.l	a0,d1
+		dos	VPrintf
+		bra	.loop
+	;-- done
+.done		move.l	d7,SP
+		rts
+
+.expvar		dc.l	0
+
+**
+* List all PCI expansions.
+*
+PciList		move.l	SP,d7			; remember stack
+		moveq	#1,d6
+		sf	d5			; Flag: Header shown?
+	;-- iterate through list
+.loop		pea	TAG_DONE.w
+		pea	(buf_class,PC)
+		pea	IDTAG_ClassStr
+		pea	(buf_prod,PC)
+		pea	IDTAG_ProdStr
+		pea	(buf_manuf,PC)
+		pea	IDTAG_ManufStr
+		pea	(.expvar,PC)
+		pea	IDTAG_Expansion
+		move.l	sp,a0
+		idfy	IdPciExpansion
+		move.l	d7,SP
+		tst.l	d0
+		bne	.done
+	;-- output
+		move.l	(.expvar,PC),a4
+		pea	(buf_class,PC)		; board name
+		pea	(buf_prod,PC)
+		pea	(buf_manuf,PC)
+		moveq	#0,d0
+		move	(pci_device,a4),d0
+		move.l	d0,-(sp)
+		move	(pci_vendor,a4),d0
+		move.l	d0,-(sp)
+		move.l	d6,-(sp)
+		addq.l	#1,d6
+	;-- title row
+		tst.b	d5
+		bne	.notitle
+		st	d5
+		move.l	#MSG_LISTPCI_LISTTITLE,d0
+		bsr	GetLocString
+		move.l	a0,d1
+		dos	PutStr
+.notitle	move.l	#MSG_LISTPCI_BOARDLINE,d0
+		bsr	GetLocString
+		move.l	a0,d1
+		move.l	sp,d2
 		dos	VPrintf
 		bra	.loop
 	;-- done

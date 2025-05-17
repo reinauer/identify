@@ -17,7 +17,7 @@
 ;* You should have received a copy of the GNU Lesser General Public License
 ;* along with this program. If not, see <http://www.gnu.org/licenses/>.
 ;*
-## version $VER: Identify.catalog 40.0 (13.02.2022) by David Lo Buglio
+## version $VER: Identify.catalog 41.0 (11.05.2025) by David Lo Buglio
 ## codeset 0
 ## language italiano
 ;
@@ -110,6 +110,16 @@ Almeno un'estensione non è ancora nota. Si prega di inviare questo output\n\
 al progetto Identify, vedi: %s .\n\
 Grazie per il vostro aiuto!\n\n\
 
+;
+MSG_LISTPCI_LISTTITLE
+\n\
+** ESPANSIONI PCI **\n\
+\n\
+Nr ID        Produttore           Prodotto\n\
+----------------------------------------------------------------------------\n
+;
+MSG_LISTPCI_BOARDLINE
+%2ld %04lx/%04lx %-20s %-20s %s\n
 ;
 ;
 MSG_GURU_HAIL

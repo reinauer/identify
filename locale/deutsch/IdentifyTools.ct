@@ -17,7 +17,7 @@
 ;* You should have received a copy of the GNU Lesser General Public License
 ;* along with this program. If not, see <http://www.gnu.org/licenses/>.
 ;*
-## version $VER: IdentifyTools.catalog 40.0 (13.02.2022)
+## version $VER: IdentifyTools.catalog 41.0 (11.05.2025)
 ## codeset 0
 ## language deutsch
 ;
@@ -121,6 +121,17 @@ MSG_LISTEXP_UNKNOWN
 Mindestens eine Erweiterung ist noch nicht bekannt. Bitte sende diese\n\
 Ausgabe an das Identify-Projekt, siehe: %s .\n\
 Vielen Dank für deine Hilfe!\n\n\
+
+;
+MSG_LISTPCI_LISTTITLE
+\n\
+** PCI-ERWEITERUNGEN **\n\n\
+Nr ID        Hersteller           Produkt\n\
+----------------------------------------------------------------------------\n\
+
+;
+MSG_LISTPCI_BOARDLINE
+%2ld %04lx/%04lx %-20s %-20s %s\n\
 
 ;
 MSG_GURU_HAIL
