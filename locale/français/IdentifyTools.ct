@@ -138,6 +138,9 @@ N°  ID       Fabriquant           Produit\n\
 MSG_LISTPCI_BOARDLINE
 %2ld %04lx/%04lx %-20s %-20s %s\n
 ;
+MSG_LISTEXP_VIRTUALS
+ + extensions virtuelles: %ld\n
+;
 MSG_GURU_HAIL
  -- Guru V%s -- %s\n\n
 ; -- Guru V%s -- %s\n\n

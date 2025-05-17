@@ -131,6 +131,11 @@ aufgelistet.
 Mit der Option @{b}WIDE@{ub} werden weitere Informationen zu jeder Erweiterung
 angezeigt, beispielsweise die Adresse, Größe und Seriennummer.
 
+Die Option @{b}VIRTUAL@{ub} listet auch virtuelle Erweiterungen auf. Normalerweise
+werden sie nur gezählt und die Anzahl angezeigt, wenn es mindestens eine
+gibt. Virtuelle Erweiterungen sind Erweiterungen, die durch einen Treiber
+nachträglich ins System eingefügt wurden, beispielsweise bei Busbrücken.
+
 Durch die Option @{b}FULL@{ub} werden auch alle momentan verwendeten
 Commodities aufgelistet. Diese Ausgabe eignet sich dann hervorragend
 für Bugreports und ähnliches, da das System sehr ausreichend beschrieben

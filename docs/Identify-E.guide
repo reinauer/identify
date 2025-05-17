@@ -124,6 +124,11 @@ boards will be listed (hopefully by name).
 The @{b}WIDE@{ub} option shows further information about each expansion,
 like its address, size, and serial number.
 
+The option @{b}VIRTUAL@{ub} also lists virtual extensions. Normally, they are only
+counted and the number displayed if there is at least one. Virtual
+extensions are extensions that were added to the system later by a
+driver, for example in the case of bus bridges.
+
 By using the option @{b}FULL@{ub}, all currently used commodities are listed
 too. The output is then useable for bug reports and similar.
 

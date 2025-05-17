@@ -40,10 +40,10 @@
 		INCLUDE lvo/locale.i
 
 VERSION		MACRO
-		  dc.b	"14.2"
+		  dc.b	"15.0"
 		ENDM
 DATE		MACRO
-		  dc.b	"11.11.2022"
+		  dc.b	"12.05.2025"
 		ENDM
 
 		SECTION strings,DATA
@@ -314,7 +314,8 @@ HardList	move.l	sp,d7			; remember stack
 * List all expansions.
 *
 ExpList		move.l	SP,d7			; remember stack
-		moveq	#1,d6
+		moveq	#1,d6			; D6: General board counter
+		moveq	#0,d5			; D5: Virtual board counter
 	;-- title row
 		move.l	#MSG_LISTEXP_LISTTITLE,d0
 		move.l	(ArgList+arg_Wide,PC),d1 ; Wide?
@@ -327,6 +328,8 @@ ExpList		move.l	SP,d7			; remember stack
 .loop		pea	TAG_DONE.w
 		pea	(unkflag,PC)
 		pea	IDTAG_UnknownFlag
+		pea	(.classid,PC)
+		pea	IDTAG_ClassID
 		pea	(buf_class,PC)
 		pea	IDTAG_ClassStr
 		pea	(buf_prod,PC)
@@ -340,8 +343,15 @@ ExpList		move.l	SP,d7			; remember stack
 		move.l	d7,SP
 		tst.l	d0
 		bne	.done
+	;-- virtual extension?
+		move.l	(.classid,PC),d1
+		cmp.l	#IDCID_VIRTUAL,d1
+		bne	.nonvirtual
+		addq.l	#1,d5
+		move.l	(ArgList+arg_Virtual,PC),d1 ; VIRTUAL
+		beq	.loop
 	;-- output
-		move.l	(.expvar,PC),a4
+.nonvirtual	move.l	(.expvar,PC),a4
 	;---- wide
 		moveq	#0,d0			; flags
 		move.b	(cd_Rom+er_Flags,a4),d0
@@ -395,10 +405,21 @@ ExpList		move.l	SP,d7			; remember stack
 		dos	VPrintf
 		bra	.loop
 	;-- done
-.done		move.l	d7,SP
+.done		tst.l	d5
+		beq	.completed
+		move.l	(ArgList+arg_Virtual,PC),d1 ; VIRTUAL
+		bne	.completed
+		move.l	d5,-(sp)
+		move.l	sp,d2
+		move.l	#MSG_LISTEXP_VIRTUALS,d0
+		bsr	GetLocString
+		move.l	a0,d1
+		dos	VPrintf
+.completed	move.l	d7,SP
 		rts
 
 .expvar		dc.l	0
+.classid	dc.l	0
 
 **
 * List all PCI expansions.
@@ -612,10 +633,11 @@ arg_Full	rs.l	1
 arg_Manuf	rs.l	1
 arg_Prod	rs.l	1
 arg_Update	rs.l	1
+arg_Virtual	rs.l	1
 arg_SIZEOF	rs.w	0
 
 ArgList		ds.b	arg_SIZEOF
-template	dc.b	"WIDE/S,FULL/S,MID=MANUFID/K/N,PID=PRODID/K/N,U=UPDATE/S",0
+template	dc.b	"WIDE/S,FULL/S,MID=MANUFID/K/N,PID=PRODID/K/N,U=UPDATE/S,VIRT=VIRTUAL/S",0
 
 url		dc.b	"https://identify.shredzone.org",0
 reporturl	dc.b	"https://identify.shredzone.org/missing",0
