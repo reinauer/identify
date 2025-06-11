@@ -1705,6 +1705,8 @@ manuf_tab	tabinit
 		endmf	06148
 
 		manuf	06502,"Cloanto"
+		boarda	  001,"UAE","Boot ROM",		MSG_EXP_MISC
+		boarda	  002,"UAE","UAESND",		MSG_EXP_AUDIO
 		endmf	06502
 
 		manuf	06520,"Oliver Gantert"
