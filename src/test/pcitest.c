@@ -18,6 +18,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file contains a few internal tests related to the PCI database. You
+ * can use it as an example, but please bear in mind that this code is rather
+ * meant for testing purposes only.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <exec/types.h>
@@ -38,53 +44,82 @@ LONG read_pci_database(
   __reg("d2") UWORD maxLen
 );
 
-
-int main(void) {
-  UBYTE manufacturerName[128] = {0};
-  UBYTE productName[128] = {0};
+/*
+ * This is a test for accessing the internal database file. Do not use in your code!
+ */
+static void testDatabaseAccess()
+{
+  static char manufacturerName[128] = {0};
+  static char productName[128] = {0};
 
   LONG result = read_pci_database(0x144d, 0xaa00, (STRPTR) &manufacturerName, (STRPTR) &productName, 128);
 
   Printf("Manufacturer: %s\n", manufacturerName);
   Printf("Product     : %s\n", productName);
   Printf("Return Code : %ld\n", result);
+}
 
+/*
+ * This is a test for accessing the database via identify API.
+ */
+static void testIdentify()
+{
+  static char buf_manuf[IDENTIFYBUFLEN] = {0};
+  static char buf_product[IDENTIFYBUFLEN] = {0};
+  static char buf_class[IDENTIFYBUFLEN] = {0};
 
+  /* FIND A FIXED MANUFACTURER / PRODUCT ID */
+/**/
+  LONG result = IdPciExpansionTags(
+    IDTAG_ManufID  , 0x0e11,
+    IDTAG_ProdID   , 0x5678,
+    IDTAG_ClassID  , 0x0a,
+    IDTAG_ManufStr , buf_manuf,
+    IDTAG_ProdStr  , buf_product,
+    IDTAG_ClassStr , buf_class,
+    TAG_DONE);
+/**/
+
+  /* FIND FROM A PCI_DEV STRUCTURE */
+/*
+  struct pci_dev pd;          // Fake pci_dev structure by filling it
+  pd.vendor = 0x0e11;         // only with the necessary values.
+  pd.device = 0xb060;
+  pd.devclass = 0x000a0000;
+
+  LONG result = IdPciExpansionTags(
+    IDTAG_ManufStr , buf_manuf,
+    IDTAG_ProdStr  , buf_product,
+    IDTAG_ClassStr , buf_class,
+    IDTAG_PciDev   , &pd,
+    TAG_DONE);
+*/
+
+  /* READ ALL PRESENT PCI EXPANSIONS (REQUIRES A PCI BRIDGEBOARD) */
+/*
+  struct pci_dev *expans = NULL;
+
+  LONG result = IdPciExpansionTags(
+    IDTAG_ManufStr , buf_manuf,
+    IDTAG_ProdStr  , buf_product,
+    IDTAG_ClassStr , buf_class,
+    IDTAG_Expansion, &expans,
+    TAG_DONE);
+*/
+
+  Printf("-- RESULT --\n");
+  Printf("Manuf: %s\n", buf_manuf);
+  Printf("Prod:  %s\n", buf_product);
+  Printf("Class: %s\n", buf_class);
+  Printf("RC:    %ld\n", result);
+}
+
+int main(void) {
+  testDatabaseAccess();
 
   if(IdentifyBase = OpenLibrary("identify.library", IDENTIFYVERSION))
   {
-    char manuf[IDENTIFYBUFLEN];
-    char prod[IDENTIFYBUFLEN];
-    char pclass[IDENTIFYBUFLEN];
-
-    manuf[0] = 0;
-    prod[0] = 0;
-    pclass[0] = 0;
-
-    struct pci_dev *expans = NULL;
-
-    struct pci_dev pd;
-    pd.vendor = 0x0e11;
-    pd.device = 0xb060;
-    pd.devclass = 0x000a0000;
-
-    LONG result = IdPciExpansionTags(
-      IDTAG_ManufID  , 0x0e11,
-      IDTAG_ProdID   , 0x5678,
-      IDTAG_ClassID  , 0x0a,
-      IDTAG_ManufStr , &manuf,
-      IDTAG_ProdStr  , &prod,
-      IDTAG_ClassStr , &pclass,
-  //    IDTAG_PciDev   , &pd,
-  //    IDTAG_Expansion, &expans,
-      TAG_DONE);
-
-    Printf("-- RESULT --\n");
-    Printf("Manuf: %s\n", manuf);
-    Printf("Prod:  %s\n", prod);
-    Printf("Class: %s\n", pclass);
-    Printf("RC:    %ld\n", result);
-
+    testIdentify();
     CloseLibrary(IdentifyBase);
   }
 
