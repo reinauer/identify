@@ -59,19 +59,21 @@ struct IdentifyBase {
                                           /*  including termination. Default */
                                           /*  is 50. */
 #define IDTAG_ManufStr    (_IDTAGS+0x04)  /* STRPTR of manufacturer name */
-                                          /*  puffer, or NULL */
+                                          /*  buffer, or NULL */
 #define IDTAG_ProdStr     (_IDTAGS+0x05)  /* STRPTR of product name */
-                                          /*  puffer, or NULL */
+                                          /*  buffer, or NULL */
 #define IDTAG_ClassStr    (_IDTAGS+0x06)  /* STRPTR of product class */
-                                          /*  puffer, or NULL */
+                                          /*  buffer, or NULL */
 #define IDTAG_DeadStr     (_IDTAGS+0x07)  /* STRPTR deadend or recoverable alert? */
 #define IDTAG_SubsysStr   (_IDTAGS+0x08)  /* STRPTR alert subsystem */
 #define IDTAG_GeneralStr  (_IDTAGS+0x09)  /* STRPTR alert general cause */
 #define IDTAG_SpecStr     (_IDTAGS+0x0A)  /* STRPTR alert specific cause */
 #define IDTAG_FuncNameStr (_IDTAGS+0x0B)  /* STRPTR function name */
 #define IDTAG_Expansion   (_IDTAGS+0x0C)  /* (struct ConfigDev **) for a */
-                                          /*  complete expansion check. Init */
-                                          /*  the variable with NULL. */
+                                          /*  complete expansion check. */
+                                          /* (struct pci_dev **) if used with */
+                                          /*  IdPciExpansion. */
+                                          /*  Init this variable with NULL! */
 #define IDTAG_ClassID     (_IDTAGS+0x0E)  /* ULONG * class ID of the provided */
                                           /*  expansion board (see below) [V8] */
 #define IDTAG_Localize    (_IDTAGS+0x0F)  /* BOOL return localized strings */

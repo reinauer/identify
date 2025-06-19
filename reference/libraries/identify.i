@@ -63,19 +63,21 @@ IDTAG_StrLength EQU	_IDTAGS+$03	;UWORD of maximum buffer length,
 					; including termination. Default
 					; is 50.
 IDTAG_ManufStr	EQU	_IDTAGS+$04	;STRPTR of manufacturer name
-					; puffer, or NULL
+					; buffer, or NULL
 IDTAG_ProdStr	EQU	_IDTAGS+$05	;STRPTR of product name
-					; puffer, or NULL
+					; buffer, or NULL
 IDTAG_ClassStr	EQU	_IDTAGS+$06	;STRPTR of product class
-					; puffer, or NULL
+					; buffer, or NULL
 IDTAG_DeadStr	EQU	_IDTAGS+$07	;STRPTR deadend or recoverable alert?
 IDTAG_SubsysStr EQU	_IDTAGS+$08	;STRPTR alert subsystem
 IDTAG_GeneralStr EQU	_IDTAGS+$09	;STRPTR alert general cause
 IDTAG_SpecStr	EQU	_IDTAGS+$0A	;STRPTR alert specific cause
 IDTAG_FuncNameStr EQU	_IDTAGS+$0B	;STRPTR function name
 IDTAG_Expansion EQU	_IDTAGS+$0C	;(struct ConfigDev **) for a
-					; complete expansion check. Init
-					; the variable with NULL.
+					; complete expansion check.
+					;(struct pci_dev **) if used with
+					; IdPciExpansion.
+					; Init this variable with NULL.
 IDTAG_ClassID	EQU	_IDTAGS+$0E	;ULONG * class ID of the provided
 					; expansion board (see below) [V8]
 					;UBYTE PCI class ID [V45]

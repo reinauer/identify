@@ -51,20 +51,21 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
                                         { including termination. Default }
                                         { is 50. }
        IDTAG_ManufStr    = _IDTAGS+$04; { STRPTR of manufacturer name }
-                                        { puffer, or NULL }
+                                        { buffer, or NULL }
        IDTAG_ProdStr     = _IDTAGS+$05; { STRPTR of product name }
-                                        { puffer, or NULL }
+                                        { buffer, or NULL }
        IDTAG_ClassStr    = _IDTAGS+$06; { STRPTR of product class }
-                                        { puffer, or NULL }
+                                        { buffer, or NULL }
        IDTAG_DeadStr     = _IDTAGS+$07; { STRPTR deadend or recoverable alert? }
        IDTAG_SubsysStr   = _IDTAGS+$08; { STRPTR alert subsystem }
        IDTAG_GeneralStr  = _IDTAGS+$09; { STRPTR alert general cause }
        IDTAG_SpecStr     = _IDTAGS+$0A; { STRPTR alert specific cause }
        IDTAG_FuncNameStr = _IDTAGS+$0B; { STRPTR function name }
        IDTAG_Expansion   = _IDTAGS+$0C; { "pp_ConfigDev" ConfigDev for a }
-                                        { complete expansion check. Init }
-                                        { the variable with NULL and pass }
-                                        { a pointer to it using this tag. }
+                                        { complete expansion check. }
+                                        { "pp_pci_dev" pci_dev if used with }
+                                        { IdPciExpansion. }
+                                        { Init this variable with NULL! }
        IDTAG_ClassID     = _IDTAGS+$0E; { ULONG * class ID of the provided }
                                         { expansion board (see below) [V8] }
        IDTAG_Localize    = _IDTAGS+$0F; { BOOL return localized strings }
