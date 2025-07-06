@@ -1684,6 +1684,8 @@ manuf_tab	tabinit
 		boarda	  007,"Matt Harlum","RIPPLE",	MSG_EXP_IDEHD
 		boarda	  008,"Matt Harlum","RIDE",	MSG_EXP_RAM
 		boarda	  009,"Matt Harlum","RIDE",	MSG_EXP_IDEHD
+		boarda	  010,"J. Bilander","SF2000",	MSG_EXP_RAM
+		boarda	  011,"Niklas Ekstr\xF6m, Matt Harlum","SF2000",MSG_EXP_HD
 		endmf	05194
 
 		manuf	05195,"Double H Tech"		; https://github.com/shanshe
