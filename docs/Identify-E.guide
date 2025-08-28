@@ -476,6 +476,10 @@ A FAQ can be found online here:
 History
 *******
 
+@{i}V 45.1@{ui}
+        @{b}*@{ub} Added more boards
+        @{b}*@{ub} Minor bug fixes in PCI example and includes
+
 @{i}V 45.0@{ui}
         @{b}*@{ub} Added PCI board detection (requires openpci and
           IdentifyPci, thanks to Buflash for testing)

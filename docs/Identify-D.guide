@@ -523,6 +523,10 @@ Eine FAQ in Englisch findest du online unter:
 History
 *******
 
+@{i}V 45.1@{ui}
+        @{b}*@{ub} Weitere Karten hinzugefügt
+        @{b}*@{ub} Kleine Bugfixes im PCI-Beispiel und Includes
+
 @{i}V 45.0@{ui}
         @{b}*@{ub} PCI-Boards werden nun erkannt (Benötigt openpci und
           IdentifyPci. Siehe autodocs. Dank an Buflash für das Testen.)
