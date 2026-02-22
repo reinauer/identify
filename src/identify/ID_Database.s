@@ -1553,7 +1553,7 @@ manuf_tab	tabinit
 		manuf	05016,"Apollo Team"	;
 		board	  001,"Vampire 600 V2",		MSG_EXP_TURBO
 		board	  002,"Vampire 500 V2",		MSG_EXP_TURBO
-		board	  003,"V4 FireBird V4",		MSG_EXP_TURBO
+		board	  003,"V4 FireBird",		MSG_EXP_TURBO
 		board	  004,"V4 IceDrake",		MSG_EXP_TURBO
 		board	  005,"V4 Standalone",		MSG_EXP_TURBO
 		board	  006,"Vampire 1200 V2",	MSG_EXP_TURBO
