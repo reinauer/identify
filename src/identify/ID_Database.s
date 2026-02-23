@@ -1410,8 +1410,8 @@ manuf_tab	tabinit
 
 		manuf   02782,"Oliver Achten"
 		board	  016,"AmiGUS",			MSG_EXP_AUDIO
-		board	  017,"AmiGUS",			MSG_EXP_AUDIO
-		board	  018,"AmiGUS",			MSG_EXP_AUDIO
+		board	  017,"AmiGUS",			MSG_EXP_DSP
+		board	  018,"AmiGUS",			MSG_EXP_MISC
 		endmf	02782
 
 		manuf	03084,"Team 4"
