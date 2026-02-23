@@ -999,6 +999,20 @@ do_System	move	d0,d7
 		expans	FindConfigDev
 		tst.l	d0
 		bne	.amithlon
+	;-- Apollo Standalone
+		sub.l	a0,a0
+		move	#5016,d0		; V4 Standalone (5016/005)
+		moveq	#5,d1
+		expans	FindConfigDev
+		tst.l	d0
+		bne	.v4standalone
+	;-- Apollo A6000
+		sub.l	a0,a0
+		move	#5016,d0		; A6000 (5016/008)
+		moveq	#8,d1
+		expans	FindConfigDev
+		tst.l	d0
+		bne	.a6000
 	;-- Amiga 4000, OS 3.1
 		lea	(a4000bonus,a4),a1
 		exec	FindResident
@@ -1129,6 +1143,10 @@ do_System	move	d0,d7
 .amithlon	lea	(flags_emulated,PC),a0
 		st	(a0)
 		moveq	#IDSYS_AMITHLON,d0
+		rts
+.v4standalone	moveq	#IDSYS_V4STANDALONE,d0
+		rts
+.a6000		moveq	#IDSYS_A6000,d0
 		rts
 
 		cnop	0,4

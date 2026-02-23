@@ -187,6 +187,8 @@ IDSYS_AMIGAXL	EQU	14	; AmigaXL
 IDSYS_AMITHLON	EQU	15	; Amithlon
 IDSYS_AAA	EQU	16	; Amiga AAA (single graphics)
 IDSYS_AAA_DUAL	EQU	17	; Amiga AAA (dual graphics)
+IDSYS_V4STANDALONE EQU	18	; Apollo V4 Standalone
+IDSYS_A6000	EQU	19	; Apollo A6000
 
 *
 * IDHW_CPU numerical result codes

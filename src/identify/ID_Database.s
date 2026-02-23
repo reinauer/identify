@@ -1550,7 +1550,7 @@ manuf_tab	tabinit
 		board	  008,"Zeus68k",		MSG_EXP_TURBO
 		endmf	05015
 
-		manuf	05016,"Apollo Team"	;
+		manuf	05016,"Apollo Team"
 		board	  001,"Vampire 600 V2",		MSG_EXP_TURBO
 		board	  002,"Vampire 500 V2",		MSG_EXP_TURBO
 		board	  003,"V4 FireBird",		MSG_EXP_TURBO
@@ -1558,7 +1558,7 @@ manuf_tab	tabinit
 		board	  005,"V4 Standalone",		MSG_EXP_TURBO
 		board	  006,"Vampire 1200 V2",	MSG_EXP_TURBO
 		board	  007,"V4 Manticore",		MSG_EXP_TURBO
-		board	  008,"V4 A6000",			MSG_EXP_TURBO
+		board	  008,"V4 A6000",		MSG_EXP_TURBO
 		endmf	05016
 
 		manuf	05017,"Alastair M. Robinson"

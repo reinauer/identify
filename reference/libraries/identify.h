@@ -183,6 +183,8 @@ struct IdentifyBase {
 #define IDSYS_AMITHLON    (15)    /*  Amithlon */
 #define IDSYS_AAA         (16)    /*  Amiga AAA (single graphics) */
 #define IDSYS_AAA_DUAL    (17)    /*  Amiga AAA (dual graphics) */
+#define IDSYS_V4STANDALONE (18)   /*  Apollo V4 Standalone */
+#define IDSYS_A6000       (19)    /*  Apollo A6000 */
 
 /*
  * IDHW_CPU numerical result codes

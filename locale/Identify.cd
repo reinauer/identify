@@ -525,6 +525,10 @@ MSG_HW_SYS_AAA          (//49)
 Amiga AAA
 MSG_HW_SYS_AAA_DUAL     (//49)
 Amiga AAA Dual
+MSG_HW_SYS_V4STANDALONE (//49)
+Apollo V4 Standalone
+MSG_HW_SYS_A6000        (//49)
+Apollo A6000
 ;
 MSG_HW_68000            (5000//49)
 68000
