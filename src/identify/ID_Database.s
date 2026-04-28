@@ -1902,6 +1902,11 @@ manuf_tab	tabinit
 		board	  043,"SRAM Card",		MSG_EXP_RAM
 		endmf	49160
 
+		manuf	49374,"Stefan Reinauer"
+		board	  001,"A4092",			MSG_EXP_SCSIHD
+		board	  002,"A4770 Cheetah",		MSG_EXP_SCSIHD
+		endmf	49374
+
 		manuf	56797,"David Dunklee"
 		board	  221,"Parceiro",		MSG_EXP_RAM
 		board	  238,"Parceiro",		MSG_EXP_MISC
