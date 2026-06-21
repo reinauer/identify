@@ -1773,6 +1773,10 @@ manuf_tab	tabinit
 		boardf	  035,f_apollo_035
 		endmf	08738
 
+		manuf	09222,"Jammy"			; https://github.com/jimshawx/jammy
+		board	  000,"RAM",			MSG_EXP_RAM
+		endmf	09222
+
 		manuf	09512,"Tower Technologies"
 		board	  000,"ZetaCom Z2 Prototype",	MSG_EXP_MULTIIO
 		board	  001,"ZetaCom Z2",		MSG_EXP_MULTIIO

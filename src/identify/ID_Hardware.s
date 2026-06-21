@@ -999,6 +999,13 @@ do_System	move	d0,d7
 		expans	FindConfigDev
 		tst.l	d0
 		bne	.amithlon
+	;-- Jammy emulator?
+		sub.l	a0,a0
+		move	#9222,d0		; Jammy (9222/??)
+		moveq	#-1,d1
+		expans	FindConfigDev
+		tst.l	d0
+		bne	.jammy
 	;-- Apollo Standalone
 		sub.l	a0,a0
 		move	#5016,d0		; V4 Standalone (5016/005)
@@ -1143,6 +1150,10 @@ do_System	move	d0,d7
 .amithlon	lea	(flags_emulated,PC),a0
 		st	(a0)
 		moveq	#IDSYS_AMITHLON,d0
+		rts
+.jammy		lea	(flags_emulated,PC),a0
+		st	(a0)
+		moveq	#IDSYS_JAMMY,d0
 		rts
 .v4standalone	moveq	#IDSYS_V4STANDALONE,d0
 		rts

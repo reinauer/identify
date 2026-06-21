@@ -174,6 +174,7 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDSYS_AAA_DUAL   = 17;   { Amiga AAA (dual graphics) }
        IDSYS_V4STANDALONE = 18; { Apollo V4 Standalone }
        IDSYS_A6000      = 19;   { Apollo A6000 }
+       IDSYS_JAMMY      = 20;   { Jammy }
 
 { IDHW_CPU numerical result codes }
 

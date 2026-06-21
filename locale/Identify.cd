@@ -529,6 +529,8 @@ MSG_HW_SYS_V4STANDALONE (//49)
 Apollo V4 Standalone
 MSG_HW_SYS_A6000        (//49)
 Apollo A6000
+MSG_HW_SYS_JAMMY        (//49)
+Jammy
 ;
 MSG_HW_68000            (5000//49)
 68000
