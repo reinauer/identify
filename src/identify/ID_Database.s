@@ -1673,6 +1673,9 @@ manuf_tab	tabinit
 
 		manuf	05192,"dec0de Consulting"
 		board	  001,"ROMulus",		MSG_EXP_FLASHROM
+		board	  002,"Copperline",		MSG_EXP_MISC
+		board	  003,"Copperline Z2 RAM",	MSG_EXP_RAM
+		board	  004,"Copperline Z3 RAM",	MSG_EXP_RAM
 		endmf	05192
 
 		manuf	05194,"Open Hardware Repository" ; https://oahr.github.io/oahr/

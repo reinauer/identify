@@ -531,6 +531,8 @@ MSG_HW_SYS_A6000        (//49)
 Apollo A6000
 MSG_HW_SYS_JAMMY        (//49)
 Jammy
+MSG_HW_SYS_COPPERLINE   (//49)
+Copperline
 ;
 MSG_HW_68000            (5000//49)
 68000

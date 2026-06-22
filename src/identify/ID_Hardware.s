@@ -999,6 +999,13 @@ do_System	move	d0,d7
 		expans	FindConfigDev
 		tst.l	d0
 		bne	.amithlon
+	;-- Copperline emulator?
+		sub.l	a0,a0
+		move	#5192,d0		; Copperline (5192/2)
+		moveq	#2,d1
+		expans	FindConfigDev
+		tst.l	d0
+		bne	.copperline
 	;-- Jammy emulator?
 		sub.l	a0,a0
 		move	#9222,d0		; Jammy (9222/??)
@@ -1154,6 +1161,10 @@ do_System	move	d0,d7
 .jammy		lea	(flags_emulated,PC),a0
 		st	(a0)
 		moveq	#IDSYS_JAMMY,d0
+		rts
+.copperline	lea	(flags_emulated,PC),a0
+		st	(a0)
+		moveq	#IDSYS_COPPERLINE,d0
 		rts
 .v4standalone	moveq	#IDSYS_V4STANDALONE,d0
 		rts

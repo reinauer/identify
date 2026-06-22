@@ -190,6 +190,7 @@ IDSYS_AAA_DUAL	EQU	17	; Amiga AAA (dual graphics)
 IDSYS_V4STANDALONE EQU	18	; Apollo V4 Standalone
 IDSYS_A6000	EQU	19	; Apollo A6000
 IDSYS_JAMMY	EQU	20	; Jammy
+IDSYS_COPPERLINE EQU	21	; Copperline
 
 *
 * IDHW_CPU numerical result codes
