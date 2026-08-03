@@ -35,6 +35,8 @@ This project is mainly made to be built on Linux machines. However, with a few m
 
 A git submodule is used, so make sure to also clone the submodules, e.g. `git clone --recursive` for new clones, and `git submodule init; git submodule update` for existing checkouts.
 
+After checkout or update of the submodule, invoke `update-pci.py` to generate the PCI database files.
+
 Requirements:
 
 * [GNU make](http://www.gnu.org/software/make/) or another compatible make tool
