@@ -25,7 +25,8 @@ Features:
   - Also detects PCI boards (requires IdentifyPci packet!)
   - Fully FPGA, DraCo, and PowerPC compatible
   - Supports PowerUp and WarpOS
-  - Fully localized (catalogs included: Deutsch, Français, Italiano)
+  - Fully localized (catalogs included: Deutsch, Français, Italiano,
+    Magyar)
   - Use the features in ARexx, with the included rexxidentify.library
   - English and German documentation
 

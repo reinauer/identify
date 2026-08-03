@@ -619,7 +619,7 @@ Kalibrálás: pozícionálási hiba
 ;
 MSG_AN_TDDELAY
 Késleltetés: hiba az idozíto várakozásakor
-; 
+;
 MSG_AN_TEXTTMPRAS
 Szöveg: nincs memória a TmpRas-hoz
 ;
@@ -750,6 +750,9 @@ Jammy
 ;
 MSG_HW_SYS_COPPERLINE
 Copperline
+;
+MSG_HW_SYS_VAMIGA
+vAmiga
 ;
 MSG_HW_68000
 68000
