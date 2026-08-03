@@ -586,6 +586,12 @@ identify.library/IdHardwareUpdate
                 IDHW_DENISEREV  -- [V10] Denise chip revision
                         (e.g. "0")
 
+                IDHW_BOINGBAG   -- [V12] BoingBag version,
+                        (deprecated, part of IDHW_OSNR)
+
+                IDHW_EMULATED   -- [V13] Is the Amiga emulated?
+                        ("Found" if it is)
+
                 IDHW_LASTALERTTASK -- [V37] Task that caused the last alert
                         (e.g. "0x0003742A")
 
@@ -793,6 +799,12 @@ identify.library/IdHardwareUpdate
 
                 IDHW_DENISEREV  -- [V10] Denise chip revision
                         (LONG, -1 means not available)
+
+                IDHW_BOINGBAG   -- [V12] BoingBag version,
+                        (deprecated, part of IDHW_OSNR)
+
+                IDHW_EMULATED   -- [V13] Is the Amiga emulated?
+                        (BOOL)
 
                 IDHW_LASTALERTTASK -- [V37] Task that caused the last alert
                         (LONG, 0 means not available)
