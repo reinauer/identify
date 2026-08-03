@@ -77,6 +77,7 @@ The identify tools are fully localizable. English is the built-in language. Avai
 * Deutsch (by Richard Körber)
 * Français (by Filipe Brandão)
 * Italiano (by David Lo Buglio)
+* Magyar (by Berda Jenő)
 
 If you want to provide other translations, please contact me for assistance.
 
