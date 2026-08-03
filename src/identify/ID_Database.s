@@ -2026,6 +2026,8 @@ f_phase5_011	move.l	a5,d0			; ConfigDev present?
 		beq	.fastlane		;  no -> return a fixed board
 	;-- find out type
 		move.l	(cd_BoardAddr,a5),a1
+		btst.b	#ERFB_ZORRO_III,(cd_Rom+er_Flags,a5)
+		bne	.fastlanecyber		; Zorro III board
 		move.b	(cd_Rom+er_Type,a5),d1
 		and.b	#ERT_TYPEMASK,d1
 		cmp.b	#ERT_ZORROIII,d1	; if it's a Zorro III board,
