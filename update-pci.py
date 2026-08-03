@@ -62,15 +62,6 @@ def newProduct(id, name):
         return
     products[currentManuf][id] = name
 
-def removeEmptyManufacturers():
-    emptyManufacturers = [
-        id for id, prodList in products.items() if len(prodList) == 0
-    ]
-    for id in emptyManufacturers:
-        del products[id]
-        del manufacturers[id]
-    return len(emptyManufacturers)
-
 def newClass(id, name):
     global classes
     classes[id] = name
@@ -162,8 +153,6 @@ with open("pciids/pci.ids") as file:
         if vc:
             newClass(int(vc.group(1), 16), vc.group(2))
 
-emptyManufCount = removeEmptyManufacturers()
-
 print("-- Generating Database Source --")
 writeDatabase("src/identify/pci/database.s")
 
@@ -184,5 +173,4 @@ print("  Manufacturers:  {}".format(len(manufacturers)))
 print("  Products:       {}".format(prodCount))
 print("  PCI Classes:    {}".format(len(classes)))
 print("  Max Str Length: {}".format(strLen))
-print("  Empty Removed:  {}".format(emptyManufCount))
 print()
