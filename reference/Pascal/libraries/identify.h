@@ -176,6 +176,7 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDSYS_A6000      = 19;   { Apollo A6000 }
        IDSYS_JAMMY      = 20;   { Jammy }
        IDSYS_COPPERLINE = 21;   { Copperline }
+       IDSYS_VAMIGA     = 22;   { vAmiga }
 
 { IDHW_CPU numerical result codes }
 

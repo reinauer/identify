@@ -187,6 +187,7 @@ struct IdentifyBase {
 #define IDSYS_A6000       (19)    /*  Apollo A6000 */
 #define IDSYS_JAMMY       (20)    /*  Jammy */
 #define IDSYS_COPPERLINE  (21)    /*  Copperline */
+#define IDSYS_VAMIGA      (22)    /*  vAmiga */
 
 /*
  * IDHW_CPU numerical result codes

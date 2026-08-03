@@ -533,6 +533,8 @@ MSG_HW_SYS_JAMMY        (//49)
 Jammy
 MSG_HW_SYS_COPPERLINE   (//49)
 Copperline
+MSG_HW_SYS_VAMIGA       (//49)
+vAmiga
 ;
 MSG_HW_68000            (5000//49)
 68000

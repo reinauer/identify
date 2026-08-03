@@ -1013,6 +1013,13 @@ do_System	move	d0,d7
 		expans	FindConfigDev
 		tst.l	d0
 		bne	.jammy
+	;-- vAmiga emulator?
+		sub.l	a0,a0
+		move	#1977,d0		; vAmiga (1977/103)
+		moveq	#103,d1
+		expans	FindConfigDev
+		tst.l	d0
+		bne	.vamiga
 	;-- Apollo Standalone
 		sub.l	a0,a0
 		move	#5016,d0		; V4 Standalone (5016/005)
@@ -1157,6 +1164,10 @@ do_System	move	d0,d7
 .amithlon	lea	(flags_emulated,PC),a0
 		st	(a0)
 		moveq	#IDSYS_AMITHLON,d0
+		rts
+.vamiga		lea	(flags_emulated,PC),a0
+		st	(a0)
+		moveq	#IDSYS_VAMIGA,d0
 		rts
 .jammy		lea	(flags_emulated,PC),a0
 		st	(a0)

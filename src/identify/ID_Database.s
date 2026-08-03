@@ -375,6 +375,8 @@ manuf_tab	tabinit
 
 		manuf	01337,"Thomas Stenzel"
 		board	  001,"PyRamIDE",		MSG_EXP_IDEHDRAM
+		boarda	  119,"Rastec","DiagBoard",	MSG_EXP_MISC	; vAmiga, emulated
+		boarda	  136,"Rastec","HdController",	MSG_EXP_HD	; vAmiga, emulated
 		endmf	01337
 
 		manuf	01576,"Boris Krizma"
@@ -446,6 +448,10 @@ manuf_tab	tabinit
 		board	  083,"Z3 Fast RAM",		MSG_EXP_RAM
 		board	  096,"UAEGFX",			MSG_EXP_GFX
 		endmf	01803
+
+		manuf	01977,"vAmiga"
+		board	  103,"RamExpansion",		MSG_EXP_RAM
+		endmf	01977
 
 		manuf	02002,"Mimetics"
 		endmf	02002
