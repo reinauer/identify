@@ -10,7 +10,7 @@
 
 If no PCI boards are listed at all, make sure that the [openpci](https://aminet.net/package/driver/other/openpci68k) and [IdentifyPci](https://aminet.net/package/util/libs/IdentifyPci) packets are properly installed.
 
-If your PCI board isn't properly detected, please report it at [The PCI ID Repository](https://pci-ids.ucw.cz/). However, if the manufacturer is AMD or Intel, please [open an issue](https://codeberg.org/shred/identify/issues) here instead!
+If your PCI board isn't properly detected, please report it at [The PCI ID Repository](https://pci-ids.ucw.cz/). However, if the manufacturer is AMD or Intel, please [open an issue](https://codefloe.com/shred/identify/issues) here instead!
 
 > **I have made a new Amiga expansion. Can I register a manufacturer/product ID with you?**
 
@@ -42,7 +42,7 @@ Measuring the clock requires real Fast RAM for best results. If there is only Ch
 
 > **My 68030 is detected as 68EC030 (or vice versa).**
 
-Please install the [mmu.library](https://aminet.net/package/util/libs/MMULib) by Thomas Richter. If your CPU is still detected as 68EC030, and you are _sure_ you own a full-fledged 68030, please file a [bug report](https://codeberg.org/shred/identify/issues/new).
+Please install the [mmu.library](https://aminet.net/package/util/libs/MMULib) by Thomas Richter. If your CPU is still detected as 68EC030, and you are _sure_ you own a full-fledged 68030, please file a [bug report](https://codefloe.com/shred/identify/issues/new).
 
 > **The CPU/FPU/MMU of my new accelerator board is shown incorrectly. Have I been victim of a scam?**
 
@@ -86,7 +86,7 @@ Information about the host system is only provided by the AmigaXL emulator. UAE 
 
 > **Where do I find the source code?**
 
-It's at the official [Codeberg repository](https://codeberg.org/shred/identify) and LGPLv3 licensed. Your contribution is welcome!
+It's at the official [Codefloe repository](https://codefloe.com/shred/identify) and LGPLv3 licensed. Your contribution is welcome!
 
 > **I'm missing a translation for my language.**
 
@@ -100,4 +100,4 @@ Well, you _can_ do that. But please consider contributing to the official projec
 
 Identify V37 was released by Thore Böckelmann in 2003. This release added new boards and new features. He published it with good intentions, but unfortunately without my consent. I can only blame myself for that, because I hadn't provided the infrastructure where a coordinated development was made possible.
 
-All changes of Thore's release have been backported to this official repository. For archiving purposes, you will find my last official Amiga built release V13.0, and Thore's V37.1, in the [Codeberg releases](https://codeberg.org/shred/identify/releases). Note that the code at the `v37.1` tag does not actually correspond to his V37.1 release, as he had used a completely different code base that was never published (to my knowledge).
+All changes of Thore's release have been backported to this official repository. For archiving purposes, you will find my last official Amiga built release V13.0, and Thore's V37.1, in the [Codefloe releases](https://codefloe.com/shred/identify/releases). Note that the code at the `v37.1` tag does not actually correspond to his V37.1 release, as he had used a completely different code base that was never published (to my knowledge).

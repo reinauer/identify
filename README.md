@@ -19,7 +19,7 @@ The source code was closed, like almost all of my Amiga projects. I have now rev
 * Use the features in ARexx, with the included rexxidentify.library
 * English and German documentation
 * LGPLv3 licensed, open source
-* Source Code available at [Codeberg](https://codeberg.org/shred/identify)
+* Source Code available at [Codefloe](https://codefloe.com/shred/identify)
 
 ## Missing Expansions
 
@@ -62,9 +62,9 @@ Today's standard encoding is UTF-8. Unfortunately AmigaOS does not support this 
 
 ## Contribution and Releases
 
-The source code of this project can be found [at the official Codeberg page](https://codeberg.org/shred/identify).
+The source code of this project can be found [at the official Codefloe page](https://codefloe.com/shred/identify).
 
-If you found a bug or have a feature request, feel free to [open an issue](https://codeberg.org/shred/identify/issues) or [send a pull request](https://codeberg.org/shred/identify/pulls).
+If you found a bug or have a feature request, feel free to [open an issue](https://codefloe.com/shred/identify/issues) or [send a pull request](https://codefloe.com/shred/identify/pulls).
 
 At the AmiNet, you will find [official binaries](http://aminet.net/package/util/libs/IdentifyUsr) and [development files](http://aminet.net/package/util/libs/IdentifyDev).
 

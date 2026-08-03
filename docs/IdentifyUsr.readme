@@ -7,7 +7,7 @@ Requires:     AmigaOS 2.0 or higher
 Architecture: m68k-amigaos >= 2.0.4
 
 License:      GNU Lesser General Public License v3
-Source:       https://codeberg.org/shred/identify
+Source:       https://codefloe.com/shred/identify
 Website:      https://identify.shredzone.org
 
 Identify is a system shared library that identifies your hardware
@@ -42,7 +42,9 @@ New in this release:
 Identify is Open Source Software. The source code is distributed under
 the LGPLv3 Lesser Gnu Public License.
 
-Reference repository: https://codeberg.org/shred/identify
+Reference repository: https://codefloe.com/shred/identify
+
+!!! REPOSITORY WAS MOVED FROM CODEBERG TO CODEFLOE !!!
 
 The source code is intentionally not part of this package. If you want
 to modify the code, please consider contributing to the reference
