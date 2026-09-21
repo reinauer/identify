@@ -42,9 +42,17 @@ DATE		MACRO
 
 		SECTION text,CODE
 
-Start	;-- open resources
+Start	;-- preserve the CLI caller registers when returning
+		 movem.l d1-d7/a0-a6,-(sp)
+		 bsr	.main
+		 movem.l (sp)+,d1-d7/a0-a6
+		 rts
+.main	;-- save the CLI string before any library calls
+		 move.l a0,_CompatArgPtr
+		 move.l d0,_CompatArgLen
+	;-- open resources
 		lea	(dosname,PC),a1
-		moveq	#36,d0
+		 moveq	#33,d0
 		exec	OpenLibrary
 		move.l	d0,dosbase
 		beq	.error1
@@ -150,6 +158,9 @@ Start	;-- open resources
 		move.l	(dosbase,PC),a1
 		exec	CloseLibrary
 		move.l	d7,d0
+		 tst.l	_CompatOutputError
+		 beq	.exit
+		 moveq	#10,d0
 .exit		rts
 	;-- error
 .error4		move.l	(identifybase,PC),a1

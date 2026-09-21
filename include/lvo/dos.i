@@ -172,6 +172,22 @@ dos		MACRO
 		  jsr	_CompatStrToLong
 		  MEXIT
 		 ENDC
+		 IFC	"\1","ReadArgs"
+		  jsr	_CompatReadArgs
+		  MEXIT
+		 ENDC
+		 IFC	"\1","FreeArgs"
+		  jsr	_CompatFreeArgs
+		  MEXIT
+		 ENDC
+		 IFC	"\1","VPrintf"
+		  jsr	_CompatVPrintf
+		  MEXIT
+		 ENDC
+		 IFC	"\1","PutStr"
+		  jsr	_CompatPutStr
+		  MEXIT
+		 ENDC
 		IFNC	"\0","q"
 		 move.l	dosbase(PC),a6
 		ENDC

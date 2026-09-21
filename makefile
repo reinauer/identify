@@ -59,6 +59,8 @@ COPTS     = +aos68k -c99 -lauto -lamiga -cpu=68020 \
             -I$(REFP) -I$(NDK_H) $(addprefix -I,$(AMIGA_INCLUDES)) \
             -L=$(NDK_LIB)/
 LOPTS     = -bamigahunk -Rstd -mrel -s -L $(NDK_LIB)/ -l amiga
+COMPAT_OBJS = $(OBJP)/Compat.o $(OBJP)/dos.o $(OBJP)/args.o \
+              $(OBJP)/strtol.o $(OBJP)/number.o
 TOOLS     = $(addprefix $(OBJP)/,ListExp Guru Function InstallIfy)
 CORE      = $(OBJP)/identify.library $(OBJP)/identify.library_000 $(OBJP)/expname.library $(TOOLS)
 
@@ -262,12 +264,12 @@ $(OBJP)/%.o: $(SRCP)/rexxidentify/%.s
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@ $<
 
 #-- tools
-$(TOOLS): $(OBJP)/%: $(SRCP)/tools/%.s \
+$(TOOLS): $(OBJP)/%: $(SRCP)/tools/%.s $(COMPAT_OBJS) \
           $(OBJP)/locale/LocaleTools.i $(wildcard include/lvo/*.i)
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@.o $<
-	vlink $(LOPTS) -o $@ $@.o $(if $(filter $(OBJP)/InstallIfy,$@),$(OBJP)/Compat.o $(OBJP)/setvar.o)
+	vlink $(LOPTS) -o $@ $@.o $(COMPAT_OBJS) $(if $(filter $(OBJP)/InstallIfy,$@),$(OBJP)/setvar.o)
 
-$(OBJP)/InstallIfy: $(OBJP)/Compat.o $(OBJP)/setvar.o
+$(OBJP)/InstallIfy: $(OBJP)/setvar.o
 
 #-- pci database
 $(SRCP)/identify/pci/database.s $(SRCP)/identify/pci/pciclasses.s &: pciids/pci.ids
@@ -303,4 +305,4 @@ $(foreach lang,deutsch français italiano,$(OBJP)/locale/$(lang)/Identify.catalo
 $(OBJP)/pci.db $(OBJP)/pcitest $(OBJP)/ExpansionMUI $(OBJP)/MyExp: | $(OBJP)
 $(OBJP)/ExpansionMUI $(OBJP)/MyExp: $(REFP)/inline/identify_protos.h $(REFP)/proto/identify.h
 
-$(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS) $(OBJP)/setvar.o $(TOOLS): makefile
+$(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS) $(COMPAT_OBJS) $(OBJP)/setvar.o $(TOOLS): makefile
