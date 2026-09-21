@@ -109,7 +109,7 @@ static LONG locate_manufacturer(BPTR fh, LONG manCount, UWORD manufId) {
   LONG current, chkManuf;
 
   while (min <= max) {
-    current = min + (max - min) / 2;
+    current = min + ((ULONG)(max - min) >> 1);
 
     if (seek(fh, (current * BYTES_PER_MANUF) + OFFSET_MANUF_TABLE) != 0) {
       return -1;
@@ -142,7 +142,7 @@ static LONG locate_manufacturer(BPTR fh, LONG manCount, UWORD manufId) {
   LONG current, chkProd;
 
   while (min <= max) {
-    current = min + (max - min) / 2;
+    current = min + ((ULONG)(max - min) >> 1);
 
     if (seek(fh, (current * BYTES_PER_PROD) + manOffset + OFFSET_PROD_TABLE) != 0) {
       return -1;

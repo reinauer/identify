@@ -39,7 +39,7 @@ After checkout or update of the submodule, invoke `update-pci.py` to generate th
 
 Requirements:
 
-* [GNU make](http://www.gnu.org/software/make/) or another compatible make tool
+* [GNU make](http://www.gnu.org/software/make/) 4.3 or newer
 * [vbcc](http://www.compilers.de/vbcc.html)
 * [fd2pragma](https://github.com/adtools/fd2pragma)
 * [FlexCat](https://github.com/adtools/flexcat/releases/tag/2.18)

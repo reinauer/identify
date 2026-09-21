@@ -26,6 +26,9 @@ DSTP      = distribution
 OBJP      = build
 RELP      = release
 DOCP      = docs
+NDK_I     ?= $(AMIGA_NDK)/Include_I
+NDK_H     ?= $(AMIGA_NDK)/Include_H
+NDK_LIB   ?= $(AMIGA_NDK)/lib
 
 ID_OBJS   = $(OBJP)/ID_Main.o $(OBJP)/ID_Support.o $(OBJP)/ID_Hardware.o \
 			$(OBJP)/ID_Locale.o $(OBJP)/ID_Functions.o $(OBJP)/ID_Expansion.o \
@@ -34,27 +37,31 @@ ID_OBJS   = $(OBJP)/ID_Main.o $(OBJP)/ID_Support.o $(OBJP)/ID_Hardware.o \
 			$(OBJP)/ppcgetinfo.o $(OBJP)/ppccpuclock.o \
 			$(OBJP)/ID_EndCode.o
 
-ID_OBJS_000 = $(OBJP)/000/ID_Main.o $(OBJP)/000/ID_Support.o $(OBJP)/000/ID_Hardware.o \
-			$(OBJP)/000/ID_Locale.o $(OBJP)/000/ID_Functions.o $(OBJP)/000/ID_Expansion.o \
-			$(OBJP)/000/ID_Database.o $(OBJP)/000/ID_Clockfreq.o $(OBJP)/000/ID_Alerts.o \
-			$(OBJP)/000/ID_PCI.o $(OBJP)/pcireader.o $(OBJP)/pciclasses.o \
-			$(OBJP)/ppcgetinfo.o $(OBJP)/ppccpuclock.o \
-			$(OBJP)/ID_EndCode.o
+# Keep the original CPU variants; C objects must match their CPU target too.
+ID_OBJS_000 = $(subst $(OBJP)/ppccpuclock.o,$(OBJP)/000/ppccpuclock.o,\
+              $(subst $(OBJP)/pcireader.o,$(OBJP)/000/pcireader.o,\
+              $(patsubst $(OBJP)/ID_%.o,$(OBJP)/000/ID_%.o,$(ID_OBJS))))
 
 EX_OBJS   = $(OBJP)/EX_Main.o
 
 RI_OBJS   = $(OBJP)/RI_Main.o
 
-AOPTS     = -Fhunk -esc -sc \
-			-I $(INCP) -I $(REFP) -I ${AMIGA_NDK}/Include_I/ -I ${AMIGA_INCLUDES} -I ${OBJP}/locale
+# Use standard LoadSeg hunks and keep the original CPU variants.
+AOPTS     = -Fhunk -esc -sc -m68000 -kick1hunks \
+            -I $(INCP) -I $(REFP) -I $(NDK_I) $(addprefix -I ,$(AMIGA_INCLUDES)) -I $(OBJP)/locale
+CORE_CC   = +kick13 -c99 -cpu=68000 -O1 -I$(NDK_H) -I$(REFP) \
+            $(addprefix -I,$(AMIGA_INCLUDES))
+CORE_CC_020 = $(filter-out -cpu=68000,$(CORE_CC)) -cpu=68020
+# The optional MUI example and developer utilities retain their OS 2.x runtime.
 COPTS     = +aos68k -c99 -lauto -lamiga -cpu=68020 \
-			-I${VBCC}/targets/m68k-amigaos/include \
-			-I$(REFP) -I${AMIGA_NDK}/Include_H/ -I${AMIGA_INCLUDES} \
-			-L=${AMIGA_NDK}/lib/
-LOPTS     = -bamigahunk -Rshort -mrel -s \
-			-L ${AMIGA_NDK}/lib/ -l debug -l amiga
+            -I${VBCC}/targets/m68k-amigaos/include \
+            -I$(REFP) -I$(NDK_H) $(addprefix -I,$(AMIGA_INCLUDES)) \
+            -L=$(NDK_LIB)/
+LOPTS     = -bamigahunk -Rstd -mrel -s -L $(NDK_LIB)/ -l amiga
+TOOLS     = $(addprefix $(OBJP)/,ListExp Guru Function InstallIfy)
+CORE      = $(OBJP)/identify.library $(OBJP)/identify.library_000 $(OBJP)/expname.library $(TOOLS)
 
-.PHONY : all clean source release check pack
+.PHONY : all core clean source release check pack
 
 all: $(OBJP) \
 		$(REFP)/inline/identify_protos.h \
@@ -152,7 +159,6 @@ check:
 
 $(OBJP):
 	mkdir -p $(OBJP)
-	mkdir -p $(OBJP)/000
 	mkdir -p $(OBJP)/locale
 	mkdir -p $(OBJP)/locale/deutsch
 	mkdir -p $(OBJP)/locale/français
@@ -209,10 +215,17 @@ $(OBJP)/identify.library: $(ID_OBJS)
 $(OBJP)/identify.library_000: $(ID_OBJS_000)
 	vlink $(LOPTS) -o $@ -s $(ID_OBJS_000)
 
-$(OBJP)/%.o: $(SRCP)/identify/%.s
+$(OBJP)/%.o: $(SRCP)/identify/%.s $(wildcard include/lvo/*.i) \
+             $(wildcard src/identify/*.i) reference/libraries/identify.i \
+             $(OBJP)/locale/ID_Locale.i | $(OBJP)
 	vasmm68k_mot $(AOPTS) -D_MAKE_68020 -L $@.lst -o $@ $<
 
-$(OBJP)/000/%.o: $(SRCP)/identify/%.s
+$(OBJP)/000:
+	mkdir -p $@
+
+$(OBJP)/000/%.o: $(SRCP)/identify/%.s $(wildcard include/lvo/*.i) \
+             $(wildcard src/identify/*.i) reference/libraries/identify.i \
+             $(OBJP)/locale/ID_Locale.i | $(OBJP)/000
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@ $<
 
 $(OBJP)/pciclasses.o: $(SRCP)/identify/pci/pciclasses.s
@@ -222,10 +235,16 @@ $(OBJP)/%.o: $(SRCP)/identify/ppc/%.s
 	vasmppc_std -Fhunk -L $@.lst -o $@ $<
 
 $(OBJP)/%.o: $(SRCP)/identify/ppc/%.c
-	vc -c $(COPTS) -o=$@ $<
+	vc -c $(CORE_CC_020) -o=$@ $<
+
+$(OBJP)/000/%.o: $(SRCP)/identify/ppc/%.c | $(OBJP)/000
+	vc -c $(CORE_CC) -o=$@ $<
 
 $(OBJP)/pcireader.o: $(SRCP)/identify/pci/pcireader.c
-	vc -c $(COPTS) -o=$@ $<
+	vc -c $(CORE_CC_020) -o=$@ $<
+
+$(OBJP)/000/pcireader.o: $(SRCP)/identify/pci/pcireader.c | $(OBJP)/000
+	vc -c $(CORE_CC) -o=$@ $<
 
 #-- expname.library
 $(OBJP)/expname.library: $(EX_OBJS)
@@ -242,12 +261,13 @@ $(OBJP)/%.o: $(SRCP)/rexxidentify/%.s
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@ $<
 
 #-- tools
-$(OBJP)/%: $(SRCP)/tools/%.s
+$(TOOLS): $(OBJP)/%: $(SRCP)/tools/%.s \
+          $(OBJP)/locale/LocaleTools.i $(wildcard include/lvo/*.i)
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@.o $<
-	vlink $(LOPTS) -o $@ -s $@.o
+	vlink $(LOPTS) -o $@ $@.o
 
 #-- pci database
-$(SRCP)/identify/pci/database.s $(SRCP)/identify/pci/pciclasses.s: pciids/pci.ids
+$(SRCP)/identify/pci/database.s $(SRCP)/identify/pci/pciclasses.s &: pciids/pci.ids
 	./update-pci.py
 
 $(OBJP)/pci.db: $(SRCP)/identify/pci/database.s
@@ -262,3 +282,16 @@ $(OBJP)/ExpansionMUI: $(SRCP)/examples/ExpansionMUI.c
 
 $(OBJP)/MyExp: $(SRCP)/examples/MyExp.c
 	vc $(COPTS) -o=$@ $<
+
+#-- Core package (same binaries as all/release)
+core: $(CORE)
+
+$(OBJP)/locale/ID_Locale.i $(OBJP)/locale/LocaleTools.i: | $(OBJP)
+$(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS): | $(OBJP)
+$(OBJP)/locale/Identify.ct $(OBJP)/locale/IdentifyTools.ct \
+$(foreach lang,deutsch français italiano,$(OBJP)/locale/$(lang)/Identify.catalog \
+    $(OBJP)/locale/$(lang)/IdentifyTools.catalog) \
+$(OBJP)/pci.db $(OBJP)/pcitest $(OBJP)/ExpansionMUI $(OBJP)/MyExp: | $(OBJP)
+$(OBJP)/ExpansionMUI $(OBJP)/MyExp: $(REFP)/inline/identify_protos.h $(REFP)/proto/identify.h
+
+$(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS) $(TOOLS): makefile
