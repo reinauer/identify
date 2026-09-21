@@ -174,7 +174,14 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 		rts
 
 	;-- error
-.error1		moveq	#0,d0
+.error1		bsr	CloseResources
+		moveq	#0,d0
+		move.l	a5,a1
+		move.w	(LIB_NEGSIZE,a5),d0
+		sub.l	d0,a1
+		add.w	(LIB_POSSIZE,a5),d0
+		exec	FreeMem
+		moveq	#0,d0
 		bra	.exit
 
 .utilsname	dc.b	"utility.library",0
@@ -240,26 +247,7 @@ LExpunge	movem.l d7/a5-a6,-(SP)
 		bsr	ExitExpansion
 		bsr	ExitLocale
 	;-- close resources
-		move.l	(openpcibase,PC),d0
-		beq	.noPci
-		move.l	d0,a1
-		exec	CloseLibrary
-.noPci		move.l	(mmubase,PC),d0
-		beq	.noMmu
-		move.l	d0,a1
-		exec	CloseLibrary
-.noMmu		move.l	(boardsbase,PC),d0
-		beq	.noBoards
-		move.l	d0,a1
-		exec	CloseLibrary
-.noBoards	move.l	(gfxbase,PC),a1
-		exec	CloseLibrary
-		move.l	(expbase,PC),a1
-		exec	CloseLibrary
-		move.l	(utilsbase,PC),a1
-		exec	CloseLibrary
-		move.l	(dosbase,PC),a1
-		exec	CloseLibrary
+		bsr	CloseResources
 	;-- release memory
 		moveq	#0,d0
 		move.l	a5,a1
@@ -278,6 +266,21 @@ LExpunge	movem.l d7/a5-a6,-(SP)
 *
 LNull		moveq	#0,d0
 		rts
+
+* Also used when only some of the dependencies opened successfully.
+CloseResources	movem.l d2/a2-a3,-(sp)
+		lea	(.bases,PC),a2
+		moveq	#6,d2
+.loop		move.l	(a2)+,a3
+		move.l	(a3),d0
+		beq	.next
+		clr.l	(a3)
+		move.l	d0,a1
+		exec	CloseLibrary
+.next		dbra	d2,.loop
+		movem.l	(sp)+,d2/a2-a3
+		rts
+.bases		dc.l openpcibase,mmubase,boardsbase,gfxbase,expbase,utilsbase,dosbase
 
 
 
