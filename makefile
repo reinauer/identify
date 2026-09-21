@@ -265,7 +265,9 @@ $(OBJP)/%.o: $(SRCP)/rexxidentify/%.s
 $(TOOLS): $(OBJP)/%: $(SRCP)/tools/%.s \
           $(OBJP)/locale/LocaleTools.i $(wildcard include/lvo/*.i)
 	vasmm68k_mot $(AOPTS) -L $@.lst -o $@.o $<
-	vlink $(LOPTS) -o $@ $@.o
+	vlink $(LOPTS) -o $@ $@.o $(if $(filter $(OBJP)/InstallIfy,$@),$(OBJP)/Compat.o $(OBJP)/setvar.o)
+
+$(OBJP)/InstallIfy: $(OBJP)/Compat.o $(OBJP)/setvar.o
 
 #-- pci database
 $(SRCP)/identify/pci/database.s $(SRCP)/identify/pci/pciclasses.s &: pciids/pci.ids
@@ -301,4 +303,4 @@ $(foreach lang,deutsch français italiano,$(OBJP)/locale/$(lang)/Identify.catalo
 $(OBJP)/pci.db $(OBJP)/pcitest $(OBJP)/ExpansionMUI $(OBJP)/MyExp: | $(OBJP)
 $(OBJP)/ExpansionMUI $(OBJP)/MyExp: $(REFP)/inline/identify_protos.h $(REFP)/proto/identify.h
 
-$(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS) $(TOOLS): makefile
+$(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS) $(OBJP)/setvar.o $(TOOLS): makefile

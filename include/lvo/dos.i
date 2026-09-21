@@ -160,6 +160,10 @@ _DOSExAllEnd			EQU -990
 _DOSSetOwner			EQU -996
 
 dos		MACRO
+		 IFC	"\1","SetVar"
+		  jsr	_CompatSetVar
+		  MEXIT
+		 ENDC
 		 IFC	"\1","FGets"
 		  jsr	_CompatFGets
 		  MEXIT
