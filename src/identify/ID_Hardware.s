@@ -1482,6 +1482,9 @@ do_OsNr	;-- get version.library version
 .not_37		moveq	#IDOS_2_0,d4		; AmigaOS 2.0
 		cmp	#36,d0
 		beq	.found
+		moveq	#IDOS_1_3,d4
+		cmp	#34,d0
+		beq	.found
 	;-- unknown OS
 		moveq	#IDOS_UNKNOWN,d4
 .found		move.l	d4,d0
@@ -2177,6 +2180,8 @@ do_RAMAccess	moveq	#80,d0			; default is 80ns
 *
 do_RAMWidth	moveq	#16,d0			; default 16 bit
 		move.l	(gfxbase,PC),a0
+		cmp.w	#39,(LIB_VERSION,a0)
+		blo	.done
 		btst	#0,(gb_MemType,a0)
 		beq	.done
 		moveq	#32,d0			; this system has 32 bit
@@ -2187,6 +2192,8 @@ do_RAMWidth	moveq	#16,d0			; default 16 bit
 *
 do_RAMCAS	moveq	#IDCAS_NORMAL,d0	; default: normal CAS
 		move.l	(gfxbase,PC),a0
+		cmp.w	#39,(LIB_VERSION,a0)
+		blo	.done
 		btst	#1,(gb_MemType,a0)
 		beq	.done
 		moveq	#IDCAS_DOUBLE,d0	; here: double CAS
@@ -2197,6 +2204,8 @@ do_RAMCAS	moveq	#IDCAS_NORMAL,d0	; default: normal CAS
 *
 do_RAMBandwidth moveq	#1,d0			; default: 1x
 		move.l	(gfxbase,PC),a0
+		cmp.w	#39,(LIB_VERSION,a0)
+		blo	.done
 		move.b	(gb_MemType,a0),d1
 		and.b	#%11,d1
 		beq	.done
@@ -2706,8 +2715,32 @@ GetRAMSize	movem.l d2-d4/a0-a1,-(SP)
 		bra	.loop
 	;-- evaluate total RAM
 .novmm		move.l	d4,d1
+		move.l	(execbase,PC),a0
+		cmp.w	#36,(LIB_VERSION,a0)
+		blo	.oldtotal
 		bset	#MEMB_TOTAL,d1
 		exec	AvailMem
+		bra	.totaldone
+	;-- MEMF_TOTAL is not supported by the 1.3 AvailMem.
+.oldtotal	exec	Forbid
+		move.l	(execbase,PC),a0
+		lea	(MemList,a0),a0
+		moveq	#0,d2
+.memloop	move.l	(a0),a0
+		tst.l	(a0)
+		beq	.memdone
+		move.w	(MH_ATTRIBUTES,a0),d0
+		and.w	d4,d0
+		cmp.w	d4,d0
+		bne	.memloop
+		move.l	(MH_UPPER,a0),d0
+		sub.l	(MH_LOWER,a0),d0
+		add.l	#MH_SIZE,d0
+		add.l	d0,d2
+		bra	.memloop
+.memdone	exec	Permit
+		move.l	d2,d0
+.totaldone
 		move.l	d3,d1
 		sub.l	d3,d0
 		movem.l (SP)+,d2-d4/a0-a1

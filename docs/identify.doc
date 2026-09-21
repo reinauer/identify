@@ -705,7 +705,7 @@ identify.library/IdHardwareUpdate
                         (include file: IDAOS_...)
 
                 IDHW_OSNR       -- What AmigaOS is used?
-                        (include file: IDOS_...)
+                        (include file: IDOS_...; IDOS_1_3 = 19 for AmigaOS 1.3)
 
                 IDHW_VMMCHIPRAM -- Size of virtual Chip RAM
                         (size in bytes)
