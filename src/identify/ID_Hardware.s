@@ -416,7 +416,9 @@ cv_VBlankFreq	lea	buf_VBlankFreq,a0
 cv_PowerFreq	lea	buf_PowerFreq,a0
 		bra	quick_freq
 
-cv_EClock	lea	buf_EClock,a0
+cv_EClock	tst.l	d0
+		beq	quick_na
+		lea	buf_EClock,a0
 		bra	quick_freq
 
 cv_SlowRAM	lea	buf_SlowRAM,a0
@@ -644,15 +646,13 @@ quick_freq	tst.b	(a0)
 **
 * Format a frequency in MHz.
 *
-quick_mhz	tst.b	(a0)
+quick_mhz	tst.l	d0
+		beq	quick_na
+		tst.b	(a0)
 		bne	.exit
-		tst.l	d0
-		beq	.notavailable
 		lea	(.mhz,PC),a1
 		bra	quick_sconv
 .exit		rts
-.notavailable	move.l	#MSG_HW_NOVERSION,d0
-		bra	quick_loc
 .mhz		dc.b	"%ld MHz",0
 		even
 
@@ -787,6 +787,9 @@ IdHardwareUpdate
 		lea	buildflags,a0
 .clrloop	sf	(a0,d0.w)
 		dbra	d0,.clrloop
+	;-- retry timing after CPU patches or temporary CIA contention
+		lea	(flags_gotclock,PC),a0
+		sf	(a0)
 	;-- invalidate strings
 		lea	buf_STARTOFBUF,a0
 		move	#((buf_ENDOFBUF-buf_STARTOFBUF)/STRSIZE)-1,d0
@@ -1882,9 +1885,25 @@ do_PowerFreq	move.l	(execbase,PC),a0
 **
 * Get e-clock frequency.
 *
+		public	GetEClockFrequency
+GetEClockFrequency
 do_EClock	move.l	(execbase,PC),a0
+		cmp.w	#36,(LIB_VERSION,a0)
+		blo	.legacy
 		move.l	(ex_EClockFrequency,a0),d0
 		rts
+.legacy		move.l	#715909,d0		; NTSC master oscillator / 40
+		btst	#5,$dff004		; ECS/AGA Agnus? (VPOSR bit 13)
+		beq	.ocs
+		btst	#4,$dff004		; hardware NTSC pin, not BEAMCON0
+		bne	.done
+		bra	.pal
+.ocs		move.l	(gfxbase,PC),a0	; graphics measured OCS beam at boot
+		move.w	(gb_DisplayFlags,a0),d1
+		btst	#PALn,d1
+		beq	.done
+.pal		move.l	#709379,d0		; PAL master oscillator / 40
+.done		rts
 
 **
 * Get size of "Slow RAM".

@@ -738,7 +738,7 @@ identify.library/IdHardwareUpdate
                         (ULONG, Unit Hertz)
 
                 IDHW_ECLOCK     -- System E clock frequency
-                        (ULONG, Unit Hertz)
+                        (ULONG, Unit Hertz; on 1.3: PAL 709379 or NTSC 715909)
 
                 IDHW_SLOWRAM    -- A500/A2000 "Slow" RAM expansion
                         (size in bytes)
@@ -765,7 +765,7 @@ identify.library/IdHardwareUpdate
                         (LONG revision or -1 if not available)
 
                 IDHW_CPUCLOCK   -- [V8] CPU clock
-                        (ULONG clock in MHz units)
+                        (ULONG clock in MHz units, or 0: not available)
 
                 IDHW_FPUCLOCK   -- [V8] FPU clock, if available
                         (ULONG clock in MHz units, or 0: not available)

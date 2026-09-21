@@ -131,17 +131,17 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 		move.l	a0,(idb_SegList,a5)
 	;-- open resources
 		lea	(.dosname,PC),a1
-		moveq	#36,d0
+		moveq	#33,d0
 		exec	OpenLibrary
 		move.l	d0,dosbase
 		beq	.error1
 		lea	(.expname,PC),a1
-		moveq	#36,d0
+		moveq	#33,d0
 		exec	OpenLibrary
 		move.l	d0,expbase
 		beq	.error1
 		lea	(.gfxname,PC),a1
-		moveq	#36,d0
+		moveq	#33,d0
 		exec	OpenLibrary
 		move.l	d0,gfxbase
 		beq	.error1
