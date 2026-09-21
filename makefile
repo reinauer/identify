@@ -35,6 +35,7 @@ ID_OBJS   = $(OBJP)/ID_Main.o $(OBJP)/ID_Support.o $(OBJP)/ID_Hardware.o \
 			$(OBJP)/ID_Database.o $(OBJP)/ID_Clockfreq.o $(OBJP)/ID_Alerts.o \
 			$(OBJP)/ID_PCI.o $(OBJP)/pcireader.o $(OBJP)/pciclasses.o \
 			$(OBJP)/ppcgetinfo.o $(OBJP)/ppccpuclock.o \
+			$(OBJP)/Compat.o $(OBJP)/fgets.o $(OBJP)/strtol.o $(OBJP)/number.o \
 			$(OBJP)/ID_EndCode.o
 
 # Keep the original CPU variants; C objects must match their CPU target too.
@@ -285,6 +286,12 @@ $(OBJP)/MyExp: $(SRCP)/examples/MyExp.c
 
 #-- Core package (same binaries as all/release)
 core: $(CORE)
+
+$(OBJP)/Compat.o: $(SRCP)/compat/Compat.s | $(OBJP)
+	vasmm68k_mot $(AOPTS) -L $@.lst -o $@ $<
+
+$(OBJP)/%.o: $(SRCP)/compat/%.c $(SRCP)/compat/args.h $(SRCP)/compat/dos_support.h | $(OBJP)
+	vc -c $(CORE_CC) -o=$@ $<
 
 $(OBJP)/locale/ID_Locale.i $(OBJP)/locale/LocaleTools.i: | $(OBJP)
 $(ID_OBJS) $(ID_OBJS_000) $(EX_OBJS) $(RI_OBJS): | $(OBJP)

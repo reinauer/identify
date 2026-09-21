@@ -128,6 +128,14 @@ _EXECRemMemHandler		EQU	-780
 _EXECObtainQuickVector		EQU	-786
 
 exec		MACRO
+		 IFC	"\1","AllocVec"
+		  jsr	_CompatAllocVec
+		  MEXIT
+		 ENDC
+		 IFC	"\1","FreeVec"
+		  jsr	_CompatFreeVec
+		  MEXIT
+		 ENDC
 		IFNC	"\0","q"
 		 IFD	execbase
 		  move.l execbase(PC),a6
