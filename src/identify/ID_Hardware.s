@@ -1098,11 +1098,19 @@ do_System	move	d0,d7
 		beq	.amiga3000		;   yes: Amiga 3000
 		cmp.b	#$0f,d0
 		beq	.amiga3000
+	;---- Amiga 600 (independent of CPU type and clock)
+		movem.l d1-d7/a0-a5,-(SP)
+		lea	(.getgayle,PC),a5	; read the serial Gayle ID
+		exec.q	Supervisor
+		movem.l (SP)+,d1-d7/a0-a5
+		and.b	#$f0,d0			; upper nibble is version, lower is revision
+		cmp.b	#$d0,d0			; Gayle on an ECS machine
+		beq	.amiga600
 	;---- Amiga 2000/060
 		btst	#AFB_68060,d7		; There is no 68060 extension for the
 		bne	.amiga2000		; Amiga 500, so must be an Amiga 2000
-	;---- Amiga 500/Amiga 600/Amiga 2000
-	;; TODO: Are there other ways to distinguish an A500/A600/A2000?
+	;---- Amiga 500/Amiga 2000
+	;; TODO: Are there other ways to distinguish an A500 from A2000?
 		bra	.amigaecs
 
 	;-- Check for OCS machines in general
@@ -1185,6 +1193,19 @@ do_System	move	d0,d7
 		cnop	0,4
 .getramsey	lea	$de0003,a0
 		move.b	($40,a0),d0
+		nop
+		rte
+
+		cnop	0,4
+.getgayle	ori.w	#$0700,sr		; keep the serial read atomic; RTE restores SR
+		lea	$de1000,a0		; Gayle ID, distinct from Gary at $de1002
+		moveq	#0,d0
+		moveq	#7,d1
+		move.b	d0,(a0)			; reset the ID shift register
+.gayleloop	move.b	(a0),d2			; each read returns the next bit in bit 7
+		lsl.b	#1,d2
+		roxl.b	#1,d0
+		dbra	d1,.gayleloop
 		nop
 		rte
 
