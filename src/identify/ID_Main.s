@@ -149,11 +149,19 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 		moveq	#3,d0
 		exec	OpenLibrary
 		move.l	d0,boardsbase		; OK if it was not found
+	;-- mmu.library requires SetPatch to have run first
+		exec	Forbid
+		lea	(.setpatchname,PC),a1
+		exec.q	FindSemaphore
+		move.l	d0,d7
+		exec.q	Permit
+		tst.l	d7
+		beq	.noMmu
 		lea	(.mmuname,PC),a1
 		moveq	#40,d0
 		exec	OpenLibrary
 		move.l	d0,mmubase		; also OK if it was not found
-		lea	(.openpciname,PC),a1
+.noMmu		lea	(.openpciname,PC),a1
 		moveq	#MIN_OPENPCI_VERSION,d0
 		exec	OpenLibrary
 		move.l	d0,openpcibase		; also OK if it was not found
@@ -185,6 +193,7 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 .gfxname	dc.b	"graphics.library",0
 .boardsname	dc.b	"boards.library",0
 .mmuname	dc.b	"mmu.library",0
+.setpatchname	dc.b	"\xAB SetPatch \xBB",0
 .openpciname	dc.b	"openpci.library",0
 		even
 
