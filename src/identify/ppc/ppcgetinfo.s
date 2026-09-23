@@ -23,7 +23,8 @@
 .set	TAG_DONE,0
 
 
-	.section "PPC-Code","crx"
+# Keep the PPC payload in a standard DATA hunk for Kickstart 1.x LoadSeg.
+	.section "PPC-Code","drw"
 
 	.global	_ppc_getinfo
 	.long	ppcinfoTags		# pointer to data section

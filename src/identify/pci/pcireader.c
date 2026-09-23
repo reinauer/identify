@@ -43,84 +43,81 @@
 #define BYTES_PER_MANUF    6
 #define BYTES_PER_PROD     6
 
-/*
- * Read a word.
- */
-static LONG read_word(BPTR fh) {
-  UBYTE buffer[2];
+/* A per-lookup cache keeps stack use small and avoids DOS packets per byte.
+ * All positions are ours: never mix DOS buffered I/O with Read/Seek. Aligning
+ * refills also lets nearby binary-search probes reuse the same data. */
+#define READ_BUFFER_SIZE 256
+struct reader {
+  BPTR fh;
+  LONG position, start, length;
+  UBYTE buffer[READ_BUFFER_SIZE];
+};
 
-  LONG len = Read(fh, &buffer, 2);
-  if (len == 2) {
-    return (buffer[0] << 8) + (buffer[1]);
-  } else {
-    return -1;
+static LONG read_byte(struct reader *r) {
+  LONG offset = r->position - r->start;
+  if (offset < 0 || offset >= r->length) {
+    r->start = r->position & ~(READ_BUFFER_SIZE - 1);
+    r->length = 0;
+    if (Seek(r->fh, r->start, OFFSET_BEGINNING) == -1) return -1;
+    r->length = Read(r->fh, r->buffer, READ_BUFFER_SIZE);
+    offset = r->position - r->start;
+    if (offset >= r->length) return -1;
   }
+  ++r->position;
+  return r->buffer[offset];
 }
 
-/*
- * Read a file offset.
- */
-static LONG read_offset(BPTR fh) {
-  UBYTE buffer[4];
-
-  LONG len = Read(fh, &buffer, 4);
-  if (len == 4) {
-    return (buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + (buffer[3]);
-  } else {
-    return -1;
-  }
+static LONG read_word(struct reader *r) {
+  LONG hi = read_byte(r), lo = read_byte(r);
+  return hi < 0 || lo < 0 ? -1 : (hi << 8) | lo;
 }
 
-/*
- * Read a null-terminated string to the given target, taking care not to exceed maxlen.
- * The read string is guaranteed to be null-terminated, unless maxlen is 0.
- * If target is NULL, nothing will be read.
- */
-static LONG read_string(BPTR fh, STRPTR target, UWORD maxlen) {
-  LONG ch;
-  if (maxlen == 0 || target == NULL) {
-    return 0;
-  }
-  while ((--maxlen > 0) && ((ch = FGetC(fh)) > 0)) {
-    *target = (BYTE) ch;
-    target++;
-  }
-  *target = (BYTE) 0;
-  if (ch > 0) {  // maxlen was reached, simulate OK
-    ch = 0;
-  }
-  return ch;
+static LONG read_offset(struct reader *r) {
+  LONG hi = read_word(r), lo = read_word(r);
+  /* File offsets must fit DOS's signed LONG. */
+  return hi < 0 || hi > 32767 || lo < 0 ? -1 : (hi << 16) | lo;
 }
 
-/*
- * Seek to the given position, related to the beginning of the file.
- */
-static LONG seek(BPTR fh, LONG pos) {
-  Seek(fh, pos, OFFSET_BEGINNING);
-  return IoErr();
+/* Always terminate a nonempty destination, including a one-byte buffer. */
+static LONG read_string(struct reader *r, STRPTR target, UWORD maxlen) {
+  LONG ch = 0;
+  if (maxlen == 0 || target == NULL) return 0;
+  while (--maxlen > 0) {
+    ch = read_byte(r);
+    if (ch <= 0) break;
+    *target++ = (BYTE)ch;
+  }
+  *target = 0;
+  return ch < 0 ? -1 : 0;
+}
+
+static LONG seek(struct reader *r, LONG pos) {
+  if (pos < 0) return -1;
+  r->position = pos;
+  return 0;
 }
 
 /*
  * Locate the manufacturer by binary search.
  */
-static LONG locate_manufacturer(BPTR fh, LONG manCount, UWORD manufId) {
+static LONG locate_manufacturer(struct reader *r, LONG manCount, UWORD manufId) {
   LONG min = 0;
   LONG max = manCount - 1;
   LONG current, chkManuf;
 
   while (min <= max) {
-    current = min + (max - min) / 2;
+    current = min + ((ULONG)(max - min) >> 1);
 
-    if (seek(fh, (current * BYTES_PER_MANUF) + OFFSET_MANUF_TABLE) != 0) {
+    if (seek(r, (current * BYTES_PER_MANUF) + OFFSET_MANUF_TABLE) != 0) {
       return -1;
     }
 
-    if ((chkManuf = read_word(fh)) < 0) {
+    if ((chkManuf = read_word(r)) < 0) {
       return -1;
     }
 
     if (chkManuf == manufId) {
-      return read_offset(fh);
+      return read_offset(r);
     }
 
     if (chkManuf < manufId) {
@@ -136,24 +133,24 @@ static LONG locate_manufacturer(BPTR fh, LONG manCount, UWORD manufId) {
 /*
  * Locate the product by binary search.
  */
- static LONG locate_product(BPTR fh, LONG manOffset, LONG prodCount, UWORD prodId) {
+ static LONG locate_product(struct reader *r, LONG manOffset, LONG prodCount, UWORD prodId) {
   LONG min = 0;
   LONG max = prodCount - 1;
   LONG current, chkProd;
 
   while (min <= max) {
-    current = min + (max - min) / 2;
+    current = min + ((ULONG)(max - min) >> 1);
 
-    if (seek(fh, (current * BYTES_PER_PROD) + manOffset + OFFSET_PROD_TABLE) != 0) {
+    if (seek(r, (current * BYTES_PER_PROD) + manOffset + OFFSET_PROD_TABLE) != 0) {
       return -1;
     }
 
-    if ((chkProd = read_word(fh)) < 0) {
+    if ((chkProd = read_word(r)) < 0) {
       return -1;
     }
 
     if (chkProd == prodId) {
-      return read_offset(fh);
+      return read_offset(r);
     }
 
     if (chkProd < prodId) {
@@ -189,9 +186,12 @@ __saveds LONG read_pci_database(
     return ERROR_NODATABASE;
   }
 
+  struct reader state, *r = &state;
+  r->fh = fh;
+  r->position = r->start = r->length = 0;
   LONG rc = ERROR_BADFILE;
   do {
-    LONG version = read_word(fh);
+    LONG version = read_word(r);
     if (version < 0) {
       break;
     }
@@ -200,12 +200,12 @@ __saveds LONG read_pci_database(
       break;
     }
 
-    LONG manCount = read_word(fh);
+    LONG manCount = read_word(r);
     if (manCount <= 0) {
       break;
     }
 
-    LONG manOffset = locate_manufacturer(fh, manCount, manufId);
+    LONG manOffset = locate_manufacturer(r, manCount, manufId);
     if (manOffset < 0) {
       break;
     }
@@ -214,28 +214,28 @@ __saveds LONG read_pci_database(
       break;
     }
 
-    if (seek(fh, manOffset) < 0) {
+    if (seek(r, manOffset) < 0) {
       break;
     }
 
-    LONG manufNameOffset = read_offset(fh);
+    LONG manufNameOffset = read_offset(r);
     if (manufNameOffset < 0) {
       break;
     }
 
-    LONG prodCount = read_word(fh);
+    LONG prodCount = read_word(r);
     if (prodCount < 0) {
       break;
     }
 
-    if (seek(fh, manufNameOffset) < 0) {
+    if (seek(r, manufNameOffset) < 0) {
       break;
     }
-    if (read_string(fh, manufName, maxLen) < 0) {
+    if (read_string(r, manufName, maxLen) < 0) {
       break;
     }
 
-    LONG prodNameOffset = locate_product(fh, manOffset, prodCount, prodId);
+    LONG prodNameOffset = locate_product(r, manOffset, prodCount, prodId);
     if (prodNameOffset < 0) {
       break;
     }
@@ -244,10 +244,10 @@ __saveds LONG read_pci_database(
       break;
     }
 
-    if (seek(fh, prodNameOffset) < 0) {
+    if (seek(r, prodNameOffset) < 0) {
       break;
     }
-    if (read_string(fh, prodName, maxLen) < 0) {
+    if (read_string(r, prodName, maxLen) < 0) {
       break;
     }
 

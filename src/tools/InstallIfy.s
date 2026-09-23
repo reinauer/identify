@@ -42,9 +42,17 @@ DATE		MACRO
 
 		SECTION text,CODE
 
-Start	;-- open resources
+Start	;-- preserve the CLI caller registers when returning
+		 movem.l d1-d7/a0-a6,-(sp)
+		 bsr	.main
+		 movem.l (sp)+,d1-d7/a0-a6
+		 rts
+.main	;-- save the CLI string before any library calls
+		 move.l a0,_CompatArgPtr
+		 move.l d0,_CompatArgLen
+	;-- open resources
 		lea	(dosname,PC),a1
-		moveq	#36,d0
+		 moveq	#33,d0
 		exec	OpenLibrary
 		move.l	d0,dosbase
 		beq	.error1
@@ -105,41 +113,43 @@ Start	;-- open resources
 		idfy	IdHardwareNum
 		move.l	d0,d7
 		bra	.done
-	;-- env mode: return as env variable
-	; D0.l: the desired hardware field
-.env_mode	move.l	(ArgList+arg_Numerical,PC),d1
+.env_mode
+		move.l	(ArgList+arg_Numerical,PC),d1
 		beq	.env_string
 	;-- env mode as numerical
 		sub.l	a0,a0
 		idfy	IdHardwareNum
-		move.l	d0,-(sp)
-		lea	(numformat,PC),a0
-		move.l	sp,a1
-		lea	(.rawdoproc,PC),a2
-		lea	(numformatbuf,PC),a3
-		exec	RawDoFmt
-		addq.l	#4,sp
-		lea	(numformatbuf,PC),a0
+	; RawDoFmt on 1.3 lacks unsigned decimal (%lu). Handle all 32 bits.
+		lea	(numformatbuf+10,PC),a0
+		clr.b	(a0)
+.digit		moveq	#10,d1
+		jsr	_CompatUDivMod32
+		add.b	#'0',d1
+		move.b	d1,-(a0)
+		tst.l	d0
+		bne	.digit
 		move.l	a0,d2
-		move.l	d6,d1
-		moveq	#-1,d3				; null terminated
-		move.l	#GVF_LOCAL_ONLY,d4
-		dos	SetVar
-		moveq	#0,d7				; rc = 0
-		bra	.done
+		bra	.set_env
 	;-- env mode as string
 	; D0.l: the desired hardware field
 .env_string	lea	(.envstringtags),a0
 		idfy	IdHardware
 		move.l	d0,d2
-		move.l	d6,d1
+.set_env	move.l	d6,d1
 		move.l	#GVF_LOCAL_ONLY,d4
+		move.l	dosbase(PC),a0
+		cmp.w	#36,LIB_VERSION(a0)
+		blo	.global
 		move.l	(ArgList+arg_Global,PC),d3
 		beq	.not_global
-		move.l	#GVF_GLOBAL_ONLY,d4
+.global		move.l	#GVF_GLOBAL_ONLY,d4
 .not_global	moveq	#-1,d3				; null terminated
 		dos	SetVar
-		moveq	#0,d7				; rc = 0
+		tst.l	d0
+		bne	.done
+		moveq	#10,d7
+		move.l	#msg_enverror,d1
+		dos	PutStr
 	;-- done
 .done		move.l	(identifybase,PC),a1
 		exec	CloseLibrary
@@ -148,11 +158,10 @@ Start	;-- open resources
 		move.l	(dosbase,PC),a1
 		exec	CloseLibrary
 		move.l	d7,d0
+		 tst.l	_CompatOutputError
+		 beq	.exit
+		 moveq	#10,d0
 .exit		rts
-	;-- rawdofmt
-.rawdoproc	move.b	d0,(a3)+
-		rts
-
 	;-- error
 .error4		move.l	(identifybase,PC),a1
 		exec	CloseLibrary
@@ -160,7 +169,8 @@ Start	;-- open resources
 		dos	FreeArgs
 .error2		move.l	(dosbase,PC),a1
 		exec	CloseLibrary
-.error1		moveq	#0,d0
+.error1
+		 moveq	#10,d0
 		bra.b	.exit
 
 .envstringtags	dc.l	IDTAG_Localize, 0		; always English
@@ -310,8 +320,7 @@ arg_SIZEOF	rs.w	0
 ArgList		ds.b	arg_SIZEOF
 template	dc.b	"FIELD,E=ENV/K,N=NUMERICAL/S,G=GLOBAL/S,U=UPDATE/S,H=HELP/S",0
 
-numformat	dc.b	"%lu",0
-numformatbuf	ds.b	30
+numformatbuf	ds.b	11
 
 versionstr	VERSION
 		dc.b	0
@@ -334,9 +343,16 @@ msg_help	dc.b	"InstallIfy V"
 		dc.b	"  GLOBAL    If ENV is used, the variable will be set globally\n"
 		dc.b	"            if this option is set. Otherwise it is local and\n"
 		dc.b	"            only available in the current script.\n"
+		dc.b	"            On 1.3, ENV always writes a global ENV: file.\n"
 		dc.b	"  UPDATE    Update the information database.\n"
 		dc.b	"  HELP      Show this page\n\n"
 		dc.b	"The result is returned as DOS return code. See the INCLUDE file\n"
 		dc.b	"for its meanings.\n",0
 		even
 
+
+		 public _DOSBase
+_DOSBase	EQU	dosbase
+
+msg_enverror	dc.b "Could not write ENV variable.",10,0
+		even

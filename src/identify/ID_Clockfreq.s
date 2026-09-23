@@ -20,6 +20,9 @@
 
 		INCLUDE exec/execbase.i
 		INCLUDE exec/memory.i
+		INCLUDE exec/interrupts.i
+		INCLUDE hardware/cia.i
+		INCLUDE lvo/cia_lib.i
 		INCLUDE devices/timer.i
 		INCLUDE lvo/exec.i
 		INCLUDE lvo/utility.i
@@ -60,6 +63,11 @@ gcl_TimerReq	fo.l	1	; ^Timer Request
 gcl_TimerBase	fo.l	1	; ^Timer Base
 gcl_CPUClk	fo.l	1	; CPU Clock
 gcl_FPUClk	fo.l	1	; FPU clock
+gcl_CIAResource	fo.l	1	; nonzero only for pre-V36 timing
+gcl_CIATimer	fo.l	1	; low counter register (high at +$100)
+gcl_CIAControl	fo.l	1	; CRA or CRB
+gcl_CIABit	fo.w	1	; owned resource interrupt bit
+gcl_Interrupt	fo.b	IS_SIZE
 gcl_CPUType	fo.b	1	; CPU Type: 0:000 1:010 2:020 3:030 4:040 5:060
 gcl_FPUType	fo.b	1	; FPU Type: 0:--- 1:881 2:882 3:040 4:060
 gcl_SIZEOF	fo.w	0
@@ -69,6 +77,17 @@ GetClocks	movem.l d2-d7/a0-a4,-(SP)
 		link	a5,#gcl_SIZEOF
 		clr.l	(gcl_CPUClk,a5)
 		clr.l	(gcl_FPUClk,a5)
+		clr.l	(gcl_CIAResource,a5)
+		move.l	4.w,a0
+		cmp.w	#36,(LIB_VERSION,a0)
+		bhs	.native
+		bsr	OpenClockCIA
+		tst.l	d0
+		beq	.exit1			; all timers in use: unavailable
+		jsr	GetEClockFrequency
+		move.l	d0,(gcl_EClock,a5)
+		bra	.cpu_type
+.native
 	;-- open timer device
 		exec	CreateMsgPort
 		move.l	d0,(gcl_MsgPort,a5)
@@ -96,7 +115,7 @@ GetClocks	movem.l d2-d7/a0-a4,-(SP)
 		add.l	#8,SP
 		move.l	d0,(gcl_EClock,a5)
 	;-- get CPU type
-		move.l	4.w,a0
+.cpu_type	move.l	4.w,a0
 		move	(AttnFlags,a0),d0
 		btst	#AFB_FPGA,d0		; FPGA?
 		bne	.exit4			;   -> yes: no result, will be useless anyway
@@ -178,7 +197,11 @@ GetClocks	movem.l d2-d7/a0-a4,-(SP)
 		move.l	d0,(gcl_FPUClk,a5)
 .no_fpu
 	;-- done
-.exit4		move.l	(gcl_TimerReq,a5),a1
+.exit4		tst.l	(gcl_CIAResource,a5)
+		beq	.close_native
+		bsr	CloseClockCIA
+		bra	.exit1
+.close_native	move.l	(gcl_TimerReq,a5),a1
 		exec	CloseDevice
 .exit3		move.l	(gcl_TimerReq,a5),a0
 		exec	DeleteIORequest
@@ -214,7 +237,8 @@ GetClocks	movem.l d2-d7/a0-a4,-(SP)
 * 	-> A5.l	Local variable base
 *	<- D0.l Cache register before change
 *
-SetCache
+SetCache	tst.l	(gcl_CIAResource,a5)
+		bne	LegacySetCache
 		move.l	#CACHEMASK,d0		; enable code & data cache on all CPUs
 		move.l	d0,d1
 		exec	CacheControl
@@ -250,7 +274,9 @@ SetCache
 * 	-> A5.l	Local variable base
 *	-> D0.l Previous cache status
 *
-RestoreCache	cmp.b	#5,(gcl_CPUType,a5)	; enable branch cache on 68060
+RestoreCache	tst.l	(gcl_CIAResource,a5)
+		bne	LegacyRestoreCache
+		cmp.b	#5,(gcl_CPUType,a5)	; enable branch cache on 68060
 		bne	.no_060
 		bclr	#23,d0
 		beq	.no_060
@@ -349,10 +375,9 @@ TestCPU		movem.l d1-d3/a0-a3,-(SP)
 	;-- measure plain stopwatch start/stop time
 		exec	Disable
 		lea	(tcpu_prestart,a4),a0	; start stopwatch
-		move.l	(gcl_TimerBase,a5),a6
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StartClock
 		lea	(tcpu_prestop,a4),a0	; stop stopwatch
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StopClock
 		exec	Enable
 	;-- compute difference
 		move.l	(tcpu_prestop+4,a4),d3
@@ -365,14 +390,13 @@ TestCPU		movem.l d1-d3/a0-a3,-(SP)
 	;-- measure real CPU performance
 		exec	Disable
 		lea	(tcpu_startclk,a4),a0	; start stopwatch
-		move.l	(gcl_TimerBase,a5),a6
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StartClock
 		move.l	#CPULOOPS,d0		; busy loop
 		cnop	0,4
 .loop		subq.l	#1,d0			; just count down
 		bcc.b	.loop
 		lea	(tcpu_stopclk,a4),a0	; stop stopwatch
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StopClock
 		exec	Enable
 	;-- compute difference
 		move.l	(tcpu_stopclk+4,a4),d0
@@ -415,10 +439,9 @@ TestFPU		movem.l d1-d3/a0-a3,-(SP)
 	;-- measure plain stopwatch start/stop time
 		exec	Disable
 		lea	(tfpu_prestart,a4),a0	; start stopwatch
-		move.l	(gcl_TimerBase,a5),a6
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StartClock
 		lea	(tfpu_prestop,a4),a0	; stop stopwatch
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StopClock
 		exec	Enable
 	;-- compute difference
 		move.l	(tfpu_prestop+4,a4),d3
@@ -432,8 +455,7 @@ TestFPU		movem.l d1-d3/a0-a3,-(SP)
 		exec	Disable
 		fmove.w #1,fp1			; set 1.0 to fp1
 		lea	(tfpu_startclk,a4),a0	; start stopwatch
-		move.l	(gcl_TimerBase,a5),a6
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StartClock
 		move.l	#FPULOOPS,d0		; busy loop
 		cnop	0,4
 .loop		fsqrt.x fp1			; just take square roots of 1
@@ -441,7 +463,7 @@ TestFPU		movem.l d1-d3/a0-a3,-(SP)
 		subq.l	#1,d0			; until counter is 0
 		bcc.b	.loop			; TODO: CPU performance should be subtracted
 		lea	(tfpu_stopclk,a4),a0	; stop stopwatch
-		jsr	(_TIMERReadEClock,a6)
+		bsr	StopClock
 		exec	Enable
 	;-- compute difference
 		move.l	(tfpu_stopclk+4,a4),d0
@@ -461,3 +483,168 @@ TestFPU		movem.l d1-d3/a0-a3,-(SP)
 	;-- error
 .error		moveq	#0,d0
 		bra	.exit
+
+**
+* Kickstart 1.3 stopwatch. Own a CIA timer through cia.resource, with its
+* interrupt disabled. A one-shot counter gives up to 65535 E-clock ticks
+* (about 92 ms). Expiration is rejected, never mistaken for a wrapped result.
+* Do not access the ICR directly: clearing it would lose other owners' IRQs.
+*
+OpenClockCIA	lea	(gcl_Interrupt,a5),a0
+		moveq	#IS_SIZE/2-1,d0
+.clear		clr.w	(a0)+
+		dbra	d0,.clear
+		move.b	#NT_INTERRUPT,(gcl_Interrupt+LN_TYPE,a5)
+		lea	(.handler,PC),a0
+		move.l	a0,(gcl_Interrupt+IS_CODE,a5)
+		lea	(.name,PC),a0
+		move.l	a0,(gcl_Interrupt+LN_NAME,a5)
+		lea	(.timers,PC),a3
+		moveq	#3,d2
+.try		move.l	(a3),a1
+		exec	OpenResource
+		tst.l	d0
+		beq	.next
+		move.l	d0,(gcl_CIAResource,a5)
+		exec	Disable
+		move.l	(gcl_CIAResource,a5),a6
+		move.l	12(a3),d0
+		lea	(gcl_Interrupt,a5),a1
+		jsr	(_LVOAddICRVector,a6)
+		tst.l	d0
+		bne	.busy
+		move.l	4(a3),(gcl_CIATimer,a5)
+		move.l	8(a3),(gcl_CIAControl,a5)
+		move.l	12(a3),d1
+		move.w	d1,(gcl_CIABit,a5)
+		moveq	#0,d0
+		bset	d1,d0
+		jsr	(_LVOAbleICR,a6)	; ownership without interrupts
+		move.l	(gcl_CIAControl,a5),a0
+		bclr	#CIACRAB_START,(a0)
+		exec	Enable
+		moveq	#1,d0
+		rts
+.busy		exec	Enable
+.next		lea	16(a3),a3
+		dbra	d2,.try
+		clr.l	(gcl_CIAResource,a5)
+		moveq	#0,d0
+		rts
+.handler	moveq	#0,d0
+		rts
+.name		dc.b	"identify clock",0
+.ciaa		dc.b	"ciaa.resource",0
+.ciab		dc.b	"ciab.resource",0
+		even
+	; Prefer CIAB/TB; try the other timers if owned by another application.
+.timers		dc.l	.ciab,$bfd000+ciatblo,$bfd000+ciacrb,CIAICRB_TB
+		dc.l	.ciab,$bfd000+ciatalo,$bfd000+ciacra,CIAICRB_TA
+		dc.l	.ciaa,$bfe001+ciatblo,$bfe001+ciacrb,CIAICRB_TB
+		dc.l	.ciaa,$bfe001+ciatalo,$bfe001+ciacra,CIAICRB_TA
+
+CloseClockCIA	exec	Disable
+		move.l	(gcl_CIAControl,a5),a0
+		bclr	#CIACRAB_START,(a0)
+		move.l	(gcl_CIAResource,a5),a6
+		moveq	#0,d0
+		move.w	(gcl_CIABit,a5),d1
+		bset	d1,d0
+		jsr	(_LVOSetICR,a6)	; clear only our pending interrupt
+		move.w	(gcl_CIABit,a5),d0
+		lea	(gcl_Interrupt,a5),a1
+		jsr	(_LVORemICRVector,a6)
+		exec	Enable
+		rts
+
+* Both hooks are called with interrupts disabled. Native systems keep using
+* ReadEClock; the legacy backend restarts its one-shot for each interval.
+StartClock	tst.l	(gcl_CIAResource,a5)
+		beq	NativeClock
+		movem.l	a0-a2,-(sp)
+		move.l	(gcl_CIAControl,a5),a1
+		move.b	(a1),d0
+		and.b	#$c0,d0			; retain serial/TOD configuration
+		tst.w	(gcl_CIABit,a5)
+		beq	.timer_a
+		and.b	#$80,d0			; TB: clear both input mode bits
+.timer_a	move.b	d0,(a1)		; stop, E-clock input, no port output
+		move.l	(gcl_CIATimer,a5),a2
+		move.b	#$ff,(a2)
+		move.b	#$ff,$100(a2)
+		or.b	#CIACRAF_START!CIACRAF_RUNMODE!CIACRAF_LOAD,d0
+		move.b	d0,(a1)
+		bsr	ReadClockCIA
+		movem.l	(sp)+,a0-a2
+		rts
+
+StopClock	tst.l	(gcl_CIAResource,a5)
+		beq	NativeClock
+		movem.l	a0-a2,-(sp)
+		move.l	(gcl_CIAControl,a5),a1
+		move.l	(gcl_CIATimer,a5),a2
+		bsr	ReadClockCIA
+		bclr	#CIACRAB_START,(a1)
+		movem.l	(sp)+,a0-a2
+		rts
+
+ReadClockCIA	moveq	#0,d0
+.again		move.b	$100(a2),d0		; high / low / high, avoid torn reads
+		move.b	(a2),d1
+		cmp.b	$100(a2),d0
+		bne	.again
+		lsl.w	#8,d0
+		move.b	d1,d0
+		not.w	d0			; elapsed ticks since $ffff
+		clr.l	(a0)
+		move.l	d0,4(a0)
+		btst	#CIACRAB_START,(a1)	; one-shot already expired?
+		bne	.done
+		move.l	#1,(a0)			; invalid high word => reject sample
+.done		rts
+
+NativeClock	move.l	(gcl_TimerBase,a5),a6
+		jmp	(_TIMERReadEClock,a6)
+
+* Pre-V36 Exec lacks CacheControl. Only change the instruction-cache enable
+* and (on 060) branch-cache enable bits, then restore the exact saved CACR.
+* 68000/010 never execute MOVEC. CPU flags must describe accelerator hardware.
+LegacySetCache	moveq	#0,d0
+		cmp.b	#2,(gcl_CPUType,a5)
+		blo	.done
+		moveq	#1,d1			; 020/030 I-cache enable
+		cmp.b	#4,(gcl_CPUType,a5)
+		blo	.mask
+		move.l	#$8000,d1		; 040/060 I-cache enable
+.mask		moveq	#0,d2
+		cmp.b	#5,(gcl_CPUType,a5)
+		bne	.supervisor
+		bset	#23,d2			; 060 branch prediction must be off
+.supervisor	move.l	a5,-(sp)
+		lea	(.enable,PC),a5
+		exec	Supervisor
+		move.l	(sp)+,a5
+.done		rts
+		MACHINE 68020
+.enable		movec	cacr,d0
+		or.l	d0,d1
+		not.l	d2
+		and.l	d2,d1
+		movec	d1,cacr
+		nop
+		rte
+		MACHINE 68000
+
+LegacyRestoreCache
+		cmp.b	#2,(gcl_CPUType,a5)
+		blo	.done
+		move.l	a5,-(sp)
+		lea	(.restore,PC),a5
+		exec	Supervisor
+		move.l	(sp)+,a5
+.done		rts
+		MACHINE 68020
+.restore	movec	d0,cacr
+		nop
+		rte
+		MACHINE 68000

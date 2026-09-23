@@ -48,9 +48,17 @@ IDENTIFY_VER	EQU	4
 
 		SECTION text,CODE
 
-Start	;-- open resources
+Start	;-- preserve the CLI caller registers when returning
+		 movem.l d1-d7/a0-a6,-(sp)
+		 bsr	.main
+		 movem.l (sp)+,d1-d7/a0-a6
+		 rts
+.main	;-- save the CLI string before any library calls
+		 move.l a0,_CompatArgPtr
+		 move.l d0,_CompatArgLen
+	;-- open resources
 		lea	(dosname,PC),a1
-		moveq	#36,d0
+		 moveq	#33,d0
 		exec	OpenLibrary
 		move.l	d0,dosbase
 		beq	.error1
@@ -135,6 +143,9 @@ Start	;-- open resources
 		move.l	(dosbase,PC),a1
 		exec	CloseLibrary
 		moveq	#0,d0
+		 tst.l	_CompatOutputError
+		 beq	.exit
+		 moveq	#10,d0
 .exit		bsr	ExitLocale
 		rts
 
@@ -270,3 +281,6 @@ buf_fnname	ds.b	50
 dosname		dc.b	"dos.library",0
 identifyname	dc.b	"identify.library",0
 		even
+
+		 public _DOSBase
+_DOSBase	EQU	dosbase

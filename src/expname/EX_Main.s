@@ -132,6 +132,12 @@ InitFct		movem.l d1-d7/a0-a6,-(sp)
 		rts
 	;-- error
 .error1		moveq	#0,d0
+		move.l	a5,a1
+		move.w	(LIB_NEGSIZE,a5),d0
+		sub.l	d0,a1
+		add.w	(LIB_POSSIZE,a5),d0
+		exec	FreeMem
+		moveq	#0,d0
 		bra	.exit
 
 .identifyname	dc.b	"identify.library",0

@@ -8,7 +8,7 @@ The source code was closed, like almost all of my Amiga projects. I have now rev
 
 * Identifies expansion card names, alerts, and function call names
 * Gives information about your Amiga model, CPU, OS version, available memory, chipset, and much more...
-* Supports from AmigaOS 2.0 up to the latest AmigaOS 3.2.3
+* 68000 and 68020 library variants and CLI tools for AmigaOS 1.3 through 3.2.3
 * The expansion database contains 369 manufacturers and 747 boards
 * Distinguishes between most GVP and Phase5 boards with unique ID
 * Tries to give at least a hint if the board name is not known yet
@@ -39,7 +39,7 @@ After checkout or update of the submodule, invoke `update-pci.py` to generate th
 
 Requirements:
 
-* [GNU make](http://www.gnu.org/software/make/) or another compatible make tool
+* [GNU make](http://www.gnu.org/software/make/) 4.3 or newer
 * [vbcc](http://www.compilers.de/vbcc.html)
 * [fd2pragma](https://github.com/adtools/fd2pragma)
 * [FlexCat](https://github.com/adtools/flexcat/releases/tag/2.18)
@@ -53,6 +53,20 @@ Requirements:
 Set the `AMIGA_NDK` env variable to the location of the unpacked `NDK3.2` directory on your build machine. Also set `AMIGA_INCLUDES` to the location of 3rd party include files, where the MUI, `mmu.library`, and `openpci.library` includes can be found.
 
 Then just invoke `make` to build the project. The compiled project can be found in the `build` directory.
+
+`make core` builds both CPU variants, expname.library, and four CLI tools;
+it produces the same binaries as `make all`. The core uses vbcc's `+kick13`
+configuration and standard Hunk relocations. `identify.library` targets 68020+;
+`identify.library_000` targets 68000/68010. Both support 1.3 and newer. Install
+the appropriate variant as `LIBS:identify.library`. ARexx and MUI retain their
+existing newer-OS dependencies.
+
+For other SDK layouts, override `NDK_I`, `NDK_H`, and `NDK_LIB`.
+`AMIGA_INCLUDES` accepts a space-separated list of include directories.
+
+On 1.3, InstallIfy's ENV option writes a global `ENV:` file, including in
+NUMERICAL mode. The `ENV:` assign and any parent drawers must already exist.
+On newer systems, the GLOBAL option selects between local and global variables.
 
 `make release` will compile a release version in the `release` directory. This target is optimized for Linux, and might not run on other operating systems.
 

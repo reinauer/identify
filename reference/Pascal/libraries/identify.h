@@ -217,7 +217,7 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
 
 { IDHW_OSNR numerical result codes }
 
-       IDOS_UNKNOWN    = 0;     { <V36 or unknown }
+       IDOS_UNKNOWN    = 0;     { Unknown OS }
        IDOS_2_0        = 1;     { OS2.0   (V36) }
        IDOS_2_04       = 2;     { OS2.04  (V37) }
        IDOS_2_1        = 3;     { OS2.1   (V38) }
@@ -236,6 +236,7 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDOS_3_9_BB2    = 16;    { OS3.9   (V45.3 "Boing Bag 2") }
        IDOS_3_2_2      = 17;    { OS3.2.2 (V47.111 by Hyperion) }
        IDOS_3_2_3      = 18;    { OS3.2.3 (V47.115 by Hyperion) }
+       IDOS_1_3        = 19;    { OS1.3 (V34) }
 
 { IDHW_CHIPSET numerical result codes }
 
