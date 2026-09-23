@@ -527,7 +527,7 @@ manuf_tab	tabinit
 		board	  002,"Impact Series I (16K/2)",MSG_EXP_SCSIHD
 		board	  003,"Impact Series I (16K/3)",MSG_EXP_SCSIHD	; Rev 3.5
 		board	  008,"Impact 3001",		MSG_EXP_TURBOIDE; Rev 3, 68030
-		board	  009,"Impact 3001",		MSG_EXP_RAM	; TurboIDE? 1-16MB 32bit
+		board	  009,"32bit RAM",		MSG_EXP_RAM	; TurboIDE? 1-16MB 32bit
 		board	  010,"Impact Series II",	MSG_EXP_RAM	; 2-8MB
 		boardf	  011,f_gvp_011
 		board	  013,"Impact 3001",		MSG_EXP_TURBOIDE ; GForce 040 with SCSI ; GVP A2000 68030 Turbo Board
@@ -1982,7 +1982,7 @@ gvpepclist	gvpinit
 		gvpepc	$78,"Phone Pak",	MSG_EXP_UNKNOWN
 		gvpepc	$98,"IO-Extender",	MSG_EXP_MULTIIO
 		gvpepc	$a0,"G-Force \'030",	MSG_EXP_TURBO
-		gvpepc	$b0,"G-Force \'030",	MSG_EXP_TURBOSCSIHD
+		gvpepc	$b0,"G-Force \'030 SCSI",MSG_EXP_TURBOSCSIHD
 		gvpepc	$c0,"A530",		MSG_EXP_TURBO
 		gvpepc	$d0,"A530",		MSG_EXP_TURBOSCSIHD
 		gvpepc	$e0,"Combo \'030 R3",	MSG_EXP_TURBO
