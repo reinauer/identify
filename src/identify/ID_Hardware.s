@@ -1103,8 +1103,10 @@ do_System	move	d0,d7
 		lea	(.getgayle,PC),a5	; read the serial Gayle ID
 		exec.q	Supervisor
 		movem.l (SP)+,d1-d7/a0-a5
-		and.b	#$f0,d0			; upper nibble is version, lower is revision
+	; Accept known IDs only: TF536 IDE emulation shifts out $df.
 		cmp.b	#$d0,d0			; Gayle on an ECS machine
+		beq	.amiga600
+		cmp.b	#$d1,d0			; AA Gayle
 		beq	.amiga600
 	;---- Amiga 2000/060
 		btst	#AFB_68060,d7		; There is no 68060 extension for the
