@@ -957,7 +957,6 @@ IdEstimateFormatSize
 *
 	defhws	a1000bonus,	"A1000 Bonus"		; A1000 bonus resident
 	defhws	a4000bonus,	"A4000 bonus"		; A4000 bonus resident
-	defhws	nd2scsiname,	"2nd.scsi.device" 	; A4000T SCSI device
 	defhws	cardresource,	"card.resource"		; card resource
 	defhws	cduiname,	"cdui.library"		; cdui library
 	defhws	dmacsemaphore,	"dmac.semaphore"	; dmac semaphore
@@ -1155,10 +1154,10 @@ do_System	move	d0,d7
 		rts
 .amiga1200	moveq	#IDSYS_AMIGA1200,d0
 		rts
-.amiga4000	lea	(nd2scsiname,a4),a1	; maybe an Amiga 4000T?
-		move.l	(execbase,PC),a6
-		lea	(DeviceList,a6),a0
-		exec	FindName
+.amiga4000	movem.l d1-d7/a0-a5,-(SP)
+		lea	(.getncr,PC),a5		; onboard SCSI distinguishes the tower
+		exec	Supervisor
+		movem.l (SP)+,d1-d7/a0-a5
 		tst.l	d0
 		bne	.amiga4000t
 		moveq	#IDSYS_AMIGA4000,d0
@@ -1201,6 +1200,41 @@ do_System	move	d0,d7
 		rts
 .a6000		moveq	#IDSYS_A6000,d0
 		rts
+
+		cnop	0,4
+.getncr		ori.w	#$0700,sr		; RTE restores the interrupt mask
+		lea	$de0000,a0		; Fat Gary timeout control (A4000 only)
+		move.b	(a0),d3
+		move.b	#0,(a0)			; terminate missing hardware with DSACK
+		moveq	#0,d0
+	; 53C770 replacement boards: GPIO direction and chip-type signature.
+		lea	$dd0000,a1
+		move.b	($44,a1),d1		; GPCNTL
+		move.b	($45,a1),d2		; MACNTL
+		cmp.b	($44,a1),d1		; require stable reads
+		bne.s	.ncr710
+		cmp.b	($45,a1),d2
+		bne.s	.ncr710
+		and.b	#$1f,d1
+		cmp.b	#$0f,d1
+		bne.s	.ncr710
+		and.b	#$f0,d2
+		cmp.b	#$20,d2			; chip type 2 = 53C770
+		beq.s	.ncrfound
+	; 53C710: CTEST8 revision nibble, excluding absent-bus values.
+.ncr710		move.b	($61,a1),d1
+		and.b	#$f0,d1
+		beq.s	.ncrdone
+		cmp.b	#$f0,d1
+		beq.s	.ncrdone
+		move.b	($61,a1),d2
+		and.b	#$f0,d2
+		cmp.b	d1,d2
+		bne.s	.ncrdone
+.ncrfound	moveq	#1,d0
+.ncrdone	move.b	d3,(a0)			; restore Gary on every path
+		nop
+		rte
 
 		cnop	0,4
 .getramsey	lea	$de0003,a0
