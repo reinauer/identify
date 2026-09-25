@@ -1037,6 +1037,13 @@ do_System	move	d0,d7
 		expans	FindConfigDev
 		tst.l	d0
 		bne	.a6000
+	;-- Apollo Manticore is A600-only; SAGA can report an AGA chipset.
+		sub.l	a0,a0
+		move	#5016,d0		; V4 Manticore (5016/007)
+		moveq	#7,d1
+		expans	FindConfigDev
+		tst.l	d0
+		bne	.amiga600
 	;-- Amiga 4000, OS 3.1
 		lea	(a4000bonus,a4),a1
 		exec	FindResident
