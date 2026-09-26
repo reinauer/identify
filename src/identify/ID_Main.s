@@ -161,10 +161,15 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 		moveq	#40,d0
 		exec	OpenLibrary
 		move.l	d0,mmubase		; also OK if it was not found
-.noMmu		lea	(.openpciname,PC),a1
+.noMmu
+	;-- OpenPCI requires Kickstart 2.04 or newer.
+		cmp.w	#37,(LIB_VERSION,a6)
+		blo.s	.noOpenPci
+		lea	(.openpciname,PC),a1
 		moveq	#MIN_OPENPCI_VERSION,d0
 		exec	OpenLibrary
 		move.l	d0,openpcibase		; also OK if it was not found
+.noOpenPci
 	;-- initialize modules
 		bsr	InitLocale
 		bsr	InitExpansion
