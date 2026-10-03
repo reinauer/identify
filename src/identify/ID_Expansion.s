@@ -206,7 +206,7 @@ IdExpansion	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 .tagdone	tst.b	(exp_GotID,a4)		; is there anything to search?
 		beq	.err_badid
 	;-- start search
-		move.l	a5,a0
+		move.l	(exp_ConfigDev,a4),a0
 		move	(exp_ManufID,a4),d0
 		move	(exp_ProdID,a4),d1
 		bsr	GetBoard
