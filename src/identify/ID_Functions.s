@@ -331,7 +331,9 @@ FillNode	movem.l d2-d7/a2-a3/a5,-(sp)
 		rts
 
 	;-- error
-.err_nomem2	move.l	(fln_ListHeader,a4),a3	; remove node
+.err_nomem2	moveq	#IDERR_NOMEM,d0
+.err_dos2	move.l	d0,d7			; preserve the failure during cleanup
+		move.l	(fln_ListHeader,a4),a3	; discard all partial function nodes
 .err_freeloop	move.l	(a3),a1
 		tst.l	(a1)
 		beq	.err_freedone
@@ -340,9 +342,7 @@ FillNode	movem.l d2-d7/a2-a3/a5,-(sp)
 		move.l	d5,a1			; release memory
 		exec	FreeVec
 		bra	.err_freeloop
-.err_freedone	moveq	#IDERR_NOMEM,d0		; out of memory
-.err_dos2	move.l	d0,d7
-		move.l	(fln_FileHandle,a4),d1	; close file
+.err_freedone	move.l	(fln_FileHandle,a4),d1	; close file
 		dos	Close
 		bra	.err_free2
 .err_dos	dos	IoErr			; I/O error
