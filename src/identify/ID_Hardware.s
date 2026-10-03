@@ -817,6 +817,8 @@ IdHardwareUpdate
 *
 		public	IdFormatString
 IdFormatString	movem.l d1-d7/a0-a6,-(SP)
+		tst.l	d0
+		beq	.exit			; no room even for a terminator
 		move.l	a1,d7
 		move.l	a1,a4
 		lea	(-1,a1,d0.l),a5
