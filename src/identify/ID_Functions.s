@@ -130,6 +130,7 @@ IdFunction	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		move	(fn_StrLength,a4),d0
 .copylen	move.b	(a0)+,(a1)+
 		dbeq	d0,.copylen
+		clr.b	-(a1)			; terminate even when truncated
 	;-- done
 .done		moveq	#0,d0
 .exit		unlk	a4
