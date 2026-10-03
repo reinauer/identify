@@ -56,6 +56,7 @@ SPrintF		movem.l d0-d3/a0-a3,-(sp)
 *
 		public	SPrintSize
 SPrintSize	movem.l d0-d5/a0-a3,-(SP)
+		moveq	#0,d2			; byte values have no fractional part
 		sf	d4
 		lea	(.sizetab,PC),a1	; table of sizes
 		lea	(.postcomma,PC),a2	; decimal table
