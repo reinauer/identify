@@ -22,6 +22,7 @@
 		INCLUDE exec/lists.i
 		INCLUDE exec/nodes.i
 		INCLUDE exec/interrupts.i
+		INCLUDE exec/semaphores.i
 		INCLUDE dos/dos.i
 		INCLUDE lvo/exec.i
 		INCLUDE lvo/dos.i
@@ -48,6 +49,8 @@ strbase		ds.w	0
 InitFunctions	movem.l d0-d1/a0-a1,-(sp)
 		lea	(liblist,PC),a0
 		NEWLIST a0
+		lea	(cache_semaphore,PC),a0
+		exec	InitSemaphore
 	;-- add handler for low-memory situations
 		move.l	(execbase,PC),a6
 		cmp	#39,(LIB_VERSION,a6)
@@ -110,11 +113,15 @@ IdFunction	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		subq	#1,d0
 		bcs	.err_nolength
 		move	d0,(fn_StrLength,a4)
+	;-- serialize cache access, including creation and copying the result
+		lea	(cache_semaphore,PC),a0
+		exec	ObtainSemaphore
+		addq.w	#1,cache_users
 	;-- search table for library
 		move.l	(fn_LibName,a4),a0
 		bsr	FindTable
 		tst.l	d0			; error -> exit
-		bne	.exit
+		bne	.unlock
 	;-- find offset
 		move.l	(fn_Offset,a4),d0
 		move.l	(fnch_FList,a0),a0
@@ -131,6 +138,13 @@ IdFunction	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 .copylen	move.b	(a0)+,(a1)+
 		dbeq	d0,.copylen
 		clr.b	-(a1)			; terminate even when truncated
+		moveq	#0,d0
+.unlock		move.l	d0,d7
+		subq.w	#1,cache_users
+		lea	(cache_semaphore,PC),a0
+		exec	ReleaseSemaphore
+		move.l	d7,d0
+		bra	.exit
 	;-- done
 .done		moveq	#0,d0
 .exit		unlk	a4
@@ -138,7 +152,7 @@ IdFunction	movem.l d1-d7/a0-a3/a5-a6,-(sp)
 		rts
 	;-- error
 .err_notfound	moveq	#IDERR_OFFSET,d0	; offset was not found
-		bra	.exit
+		bra	.unlock
 .err_nolength	moveq	#IDERR_NOLENGTH,d0	; string length was 0
 		bra	.exit
 
@@ -446,8 +460,14 @@ FreeList	movem.l d0-d3/d7/a0-a4,-(sp)
 *	-> A1.l ^is_Data
 *	<- D0.l MemHandler result
 *
-LMHFreeList	bsr	FreeList		; just release the database
+* Exec calls the handler under Forbid. Do not wait for a lookup, or reclaim
+* its nodes if an allocation invokes this handler in the owning task.
+LMHFreeList	move.w	(cache_users,PC),d0
+		bne	.busy
+		bsr	FreeList
 		moveq	#MEM_ALL_DONE,d0	; that's all we can do
+		rts
+.busy		moveq	#MEM_DID_NOTHING,d0
 		rts
 
 
@@ -456,6 +476,8 @@ LMHFreeList	bsr	FreeList		; just release the database
 *
 		cnop	0,4
 liblist		ds.b	MLH_SIZE		; list of all functions
+cache_semaphore dcb.b	SS_SIZE,0
+cache_users	dc.w	0
 memint		dc.l	0,0			; memory handler structure
 		dc.b	NT_INTERRUPT,1
 		dc.l	.name,0,LMHFreeList
