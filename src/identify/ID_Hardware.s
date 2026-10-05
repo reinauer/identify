@@ -1205,9 +1205,28 @@ do_System	move	d0,d7
 
 		cnop	0,4
 .getncr		ori.w	#$0700,sr		; RTE restores the interrupt mask
-		lea	$de0000,a0		; Fat Gary timeout control (A4000 only)
-		move.b	(a0),d3
-		move.b	#0,(a0)			; terminate missing hardware with DSACK
+	; Gary's timeout register reads status, not the programmed mode.
+	; Leave it alone and catch missing hardware with a read-only guard.
+		move.w	(AttnFlags,a6),d3
+		suba.l	a0,a0
+		btst	#AFB_68010,d3
+		beq.s	.ncrvectors
+		MACHINE 68010
+		movec	vbr,a0
+		IFD	_MAKE_68020
+		  MACHINE 68020
+		ELSE
+		  MACHINE 68000
+		ENDC
+.ncrvectors	move.l	(8,a0),-(sp)
+		move.l	(12,a0),-(sp)
+		move.l	sp,a2			; checkpoint above any fault frame
+		nop
+		lea	(.ncrberr,pc),a3
+		move.l	a3,(8,a0)
+		lea	(.ncrfault,pc),a3
+		move.l	a3,(12,a0)
+		nop				; complete vector writes before reading
 		moveq	#0,d0
 	; 53C770 replacement boards: GPIO direction and chip-type signature.
 		lea	$dd0000,a1
@@ -1234,9 +1253,33 @@ do_System	move	d0,d7
 		cmp.b	d1,d2
 		bne.s	.ncrdone
 .ncrfound	moveq	#1,d0
-.ncrdone	move.b	d3,(a0)			; restore Gary on every path
-		nop
+.ncrdone	nop				; finish reads before unhooking
+		move.l	(sp)+,(12,a0)
+		move.l	(sp)+,(8,a0)
 		rte
+
+.ncrberr	btst	#AFB_68060,d3
+		beq.s	.ncrfault
+		btst	#2,15(sp)		; 060 format 4 FSLW: BPE
+		beq.s	.ncrfault
+		move.l	d0,-(sp)
+		MACHINE 68060
+		movec	cacr,d0
+		or.l	#$00400000,d0		; clear branch cache
+		movec	d0,cacr
+		IFD	_MAKE_68020
+		  MACHINE 68020
+		ELSE
+		  MACHINE 68000
+		ENDC
+		move.l	16(sp),d0
+		and.l	#$00007ff1,d0		; access errors or SEE
+		bne.s	.ncrfault
+		move.l	(sp)+,d0
+		rte				; retry a pure prediction error
+.ncrfault	move.l	a2,sp			; discard CPU-specific fault frame
+		moveq	#0,d0
+		bra.s	.ncrdone
 
 		cnop	0,4
 .getramsey	lea	$de0003,a0
