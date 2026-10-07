@@ -192,6 +192,7 @@ IDSYS_A6000	EQU	19	; Apollo A6000
 IDSYS_JAMMY	EQU	20	; Jammy
 IDSYS_COPPERLINE EQU	21	; Copperline
 IDSYS_VAMIGA	EQU	22	; vAmiga
+IDSYS_AA3000	EQU	23	; AA3000 family (including AA3000+)
 
 *
 * IDHW_CPU numerical result codes

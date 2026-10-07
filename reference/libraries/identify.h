@@ -188,6 +188,7 @@ struct IdentifyBase {
 #define IDSYS_JAMMY       (20)    /*  Jammy */
 #define IDSYS_COPPERLINE  (21)    /*  Copperline */
 #define IDSYS_VAMIGA      (22)    /*  vAmiga */
+#define IDSYS_AA3000      (23)    /*  AA3000 family (including AA3000+) */
 
 /*
  * IDHW_CPU numerical result codes

@@ -661,6 +661,10 @@ identify.library/IdHardwareUpdate
 
                 IDHW_SYSTEM     -- What system is used?
                         (include file: IDSYS_...)
+                        IDSYS_AA3000 covers the AA3000 family, including
+                        AA3000+ reproductions. AGA and the onboard A3000
+                        WD33C93/SDMAC interface identify this family;
+                        the exact motherboard variant is not distinguished.
 
                 IDHW_CPU        -- What kind of CPU is available?
                         (include file: IDCPU_...)

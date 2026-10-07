@@ -1045,14 +1045,32 @@ do_System	move	d0,d7
 		expans	FindConfigDev
 		tst.l	d0
 		bne	.amiga600
+	;-- AGA with the A3000 onboard WD33C93: AA3000 family.
+	; Prefer hardware over ROM markers; replacement ROMs may name an A4000.
+		bsr	ReadDeniseID
+		move.b	d0,d1
+		cmp.b	#$f8,d1
+		bne.s	.check4000
+		movem.l d1-d7/a0-a5,-(sp)
+		lea	(.getwd,PC),a5
+		exec	Supervisor
+		tst.l	d0
+		beq.s	.wdchecked
+	; NCR registers overlap the WD/SDMAC area on an A4000T.
+		lea	(.getncr,PC),a5
+		exec	Supervisor
+		eori.b	#1,d0			; WD signature only if NCR is absent
+.wdchecked	movem.l (sp)+,d1-d7/a0-a5
+		tst.l	d0
+		bne	.aa3000
 	;-- Amiga 4000, OS 3.1
+.check4000	move.l	d1,-(sp)		; FindResident may scratch Denise ID
 		lea	(a4000bonus,a4),a1
 		exec	FindResident
+		move.l	(sp)+,d1
 		tst.l	d0
 		bne	.amiga4000
 	;-- Check for AGA machines in general
-		bsr	ReadDeniseID
-		move.b	d0,d1
 		cmp.b	#$f0,d1
 		beq	.aaa_lowend
 		cmp.b	#$f1,d1
@@ -1148,6 +1166,8 @@ do_System	move	d0,d7
 		rts
 .amiga3000	moveq	#IDSYS_AMIGA3000,d0
 		rts
+.aa3000		moveq	#IDSYS_AA3000,d0
+		rts
 .amiga500	moveq	#IDSYS_AMIGA500,d0
 		rts
 .cdtv		moveq	#IDSYS_CDTV,d0
@@ -1204,13 +1224,16 @@ do_System	move	d0,d7
 		rts
 
 		cnop	0,4
-.getncr		ori.w	#$0700,sr		; RTE restores the interrupt mask
+.getwd		lea	(.wdprobe,PC),a1
+		bra.s	.scsiprobe
+.getncr		lea	(.ncrprobe,PC),a1
+.scsiprobe	ori.w	#$0700,sr		; RTE restores the interrupt mask
 	; Gary's timeout register reads status, not the programmed mode.
 	; Leave it alone and catch missing hardware with a read-only guard.
 		move.w	(AttnFlags,a6),d3
 		suba.l	a0,a0
 		btst	#AFB_68010,d3
-		beq.s	.ncrvectors
+		beq.s	.scsivectors
 		MACHINE 68010
 		movec	vbr,a0
 		IFD	_MAKE_68020
@@ -1218,18 +1241,24 @@ do_System	move	d0,d7
 		ELSE
 		  MACHINE 68000
 		ENDC
-.ncrvectors	move.l	(8,a0),-(sp)
+.scsivectors	move.l	(8,a0),-(sp)
 		move.l	(12,a0),-(sp)
 		move.l	sp,a2			; checkpoint above any fault frame
 		nop
-		lea	(.ncrberr,pc),a3
+		lea	(.scsiberr,pc),a3
 		move.l	a3,(8,a0)
-		lea	(.ncrfault,pc),a3
+		lea	(.scsifault,pc),a3
 		move.l	a3,(12,a0)
 		nop				; complete vector writes before reading
 		moveq	#0,d0
+		jsr	(a1)
+.scsidone	nop				; finish reads before unhooking
+		move.l	(sp)+,(12,a0)
+		move.l	(sp)+,(8,a0)
+		rte
+
 	; 53C770 replacement boards: GPIO direction and chip-type signature.
-		lea	$dd0000,a1
+.ncrprobe	lea	$dd0000,a1
 		move.b	($44,a1),d1		; GPCNTL
 		move.b	($45,a1),d2		; MACNTL
 		cmp.b	($44,a1),d1		; require stable reads
@@ -1253,15 +1282,30 @@ do_System	move	d0,d7
 		cmp.b	d1,d2
 		bne.s	.ncrdone
 .ncrfound	moveq	#1,d0
-.ncrdone	nop				; finish reads before unhooking
-		move.l	(sp)+,(12,a0)
-		move.l	(sp)+,(8,a0)
-		rte
+.ncrdone	rts
 
-.ncrberr	btst	#AFB_68060,d3
-		beq.s	.ncrfault
+	; Ramsey gates the A3000/A4000 register area. Use only status reads:
+	; never select WD registers, acknowledge interrupts or reset SCSI.
+.wdprobe	move.b	$de0043,d1
+		cmp.b	#$0d,d1
+		beq.s	.wdramsey
+		cmp.b	#$0f,d1
+		bne.s	.wddone
+.wdramsey	cmp.b	$de0043,d1
+		bne.s	.wddone
+		moveq	#1,d2			; sample twice, allowing active SCSI
+.wdloop		move.b	$de0043,d1		; drive the bus before absent I/O
+		move.b	$dd0049,d1		; WD ASR: bits 2/3 are reserved
+		and.b	#$0c,d1
+		bne.s	.wddone
+		dbra	d2,.wdloop
+		moveq	#1,d0
+.wddone		rts
+
+.scsiberr	btst	#AFB_68060,d3
+		beq.s	.scsifault
 		btst	#2,15(sp)		; 060 format 4 FSLW: BPE
-		beq.s	.ncrfault
+		beq.s	.scsifault
 		move.l	d0,-(sp)
 		MACHINE 68060
 		movec	cacr,d0
@@ -1274,12 +1318,12 @@ do_System	move	d0,d7
 		ENDC
 		move.l	16(sp),d0
 		and.l	#$00007ff1,d0		; access errors or SEE
-		bne.s	.ncrfault
+		bne.s	.scsifault
 		move.l	(sp)+,d0
 		rte				; retry a pure prediction error
-.ncrfault	move.l	a2,sp			; discard CPU-specific fault frame
+.scsifault	move.l	a2,sp			; discard CPU-specific fault frame
 		moveq	#0,d0
-		bra.s	.ncrdone
+		bra	.scsidone
 
 		cnop	0,4
 .getramsey	lea	$de0003,a0

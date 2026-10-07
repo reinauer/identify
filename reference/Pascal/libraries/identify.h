@@ -177,6 +177,7 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDSYS_JAMMY      = 20;   { Jammy }
        IDSYS_COPPERLINE = 21;   { Copperline }
        IDSYS_VAMIGA     = 22;   { vAmiga }
+       IDSYS_AA3000     = 23;   { AA3000 family (including AA3000+) }
 
 { IDHW_CPU numerical result codes }
 
