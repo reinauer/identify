@@ -420,5 +420,5 @@ tab_objects	object	AO_ExecLib,	"exec.library"		; $00008001
 		ECHO	"## SubSystems = ",__GLBSUBSYS
 		ECHO	"## General    = ",__GLBGENERAL
 		ECHO	"## Alerts     = ",__GLBALERT
-		ECHO	"## Objects    = ",__OBJECT
+		ECHO	"## Objects    = ",__GLBOBJECT
 		ECHO	"##"

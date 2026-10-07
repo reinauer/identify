@@ -50,11 +50,13 @@ RI_OBJS   = $(OBJP)/RI_Main.o
 # Use standard LoadSeg hunks and keep the original CPU variants.
 AOPTS     = -Fhunk -esc -sc -m68000 -kick1hunks \
             -I $(INCP) -I $(REFP) -I $(NDK_I) $(addprefix -I ,$(AMIGA_INCLUDES)) -I $(OBJP)/locale
-CORE_CC   = +kick13 -c99 -cpu=68000 -O1 -I$(NDK_H) -I$(REFP) \
+# Use the NDK timer types without the legacy timeval's anonymous unions.
+NDK_CFLAGS = -D__USE_NEW_TIMEVAL__
+CORE_CC   = +kick13 -c99 $(NDK_CFLAGS) -cpu=68000 -O1 -I$(NDK_H) -I$(REFP) \
             $(addprefix -I,$(AMIGA_INCLUDES))
 CORE_CC_020 = $(filter-out -cpu=68000,$(CORE_CC)) -cpu=68020
 # The optional MUI example and developer utilities retain their OS 2.x runtime.
-COPTS     = +aos68k -c99 -lauto -lamiga -cpu=68020 \
+COPTS     = +aos68k -c99 $(NDK_CFLAGS) -lauto -lamiga -cpu=68020 \
             -I${VBCC}/targets/m68k-amigaos/include \
             -I$(REFP) -I$(NDK_H) $(addprefix -I,$(AMIGA_INCLUDES)) \
             -L=$(NDK_LIB)/
