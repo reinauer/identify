@@ -263,6 +263,7 @@ CONST  IDENTIFYBUFLEN = 50;  { default buffer length }
        IDGOS_CGX3      = 8;     { CyberGraphX 3D }
        IDGOS_PICASSO96 = 9;     { Picasso96 }
        IDGOS_CGX4      = 10;    { CyberGraphX V4 }
+       IDGOS_PRISMRTG  = 11;    { PrismRTG }
 
 { IDHW_AUDIOSYS numerical result codes }
 

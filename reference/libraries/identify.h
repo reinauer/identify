@@ -280,6 +280,7 @@ struct IdentifyBase {
 #define IDGOS_CGX3      (8)       /*  CyberGraphX 3D */
 #define IDGOS_PICASSO96 (9)       /*  Picasso96 */
 #define IDGOS_CGX4      (10)      /*  CyberGraphX V4 */
+#define IDGOS_PRISMRTG  (11)      /*  PrismRTG */
 
 /*
  * IDHW_AUDIOSYS numerical result codes

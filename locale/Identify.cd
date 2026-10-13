@@ -594,6 +594,8 @@ MSG_HW_PICASSO96        (//49)
 Picasso96
 MSG_HW_CGX4             (//49)
 CyberGraphX 4
+MSG_HW_PRISMRTG         (//49)
+PrismRTG
 ;
 MSG_HW_AUDAMIGAOS       (5700//49)
 AmigaOS

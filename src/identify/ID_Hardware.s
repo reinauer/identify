@@ -1732,8 +1732,19 @@ do_Chipset
 	defhws	gfx_picasso,	"vilintuisup.library"	; Picasso
 	defhws	gfx_pic96,	"rtg.library"		; Picasso96
 	defhws	cyber_name,	"ENVARC:CyberGraphics"	; Drawer for CGX
+	defhws	gfx_prism,	"prism"			; PrismRTG's PrismD semaphore
 
 do_GfxSys	move.l	(execbase,PC),a6
+	;-- PrismRTG brings its own cybergraphics and Picasso96API libraries,
+	;   so look for its daemon before the libraries.
+		move.l	#IDGOS_PRISMRTG,d3
+		exec	Forbid
+		lea	(gfx_prism,a4),a1
+		exec.q	FindSemaphore
+		move.l	d0,d2
+		exec.q	Permit
+		tst.l	d2
+		bne	.found
 		lea	(LibList,a6),a3
 	;-- Picasso96
 		move.l	#IDGOS_PICASSO96,d3

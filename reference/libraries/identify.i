@@ -284,6 +284,7 @@ IDGOS_CGX	EQU	7	; CyberGraphX
 IDGOS_CGX3	EQU	8	; CyberGraphX 3
 IDGOS_PICASSO96 EQU	9	; Picasso96
 IDGOS_CGX4	EQU	10	; CyberGraphX V4
+IDGOS_PRISMRTG	EQU	11	; PrismRTG
 
 *
 * IDHW_AUDIOSYS numerical result codes
