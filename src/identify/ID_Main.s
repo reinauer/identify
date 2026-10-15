@@ -149,6 +149,12 @@ InitFct		movem.l d1-d7/a0-a6,-(SP)
 		moveq	#3,d0
 		exec	OpenLibrary
 		move.l	d0,boardsbase		; OK if it was not found
+	;-- A 68000 or 68010 has no MMU and cannot address a PCI bridge,
+	;-- so neither library could find anything. Skipping them saves
+	;-- about 50 KB, which a 512 KB machine cannot spare.
+		move	(AttnFlags,a6),d0
+		btst	#AFB_68020,d0
+		beq	.noOpenPci
 	;-- mmu.library requires SetPatch to have run first
 		exec	Forbid
 		lea	(.setpatchname,PC),a1
